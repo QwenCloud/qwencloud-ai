@@ -1,0 +1,80 @@
+### Build ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+.idea
+.idea/.name
+.idea/*.xml
+.idea/dataSources/
+.idea/dataSources.ids
+.idea/dictionaries/
+.idea/httpRequests/
+.idea/libraries/
+.idea/shelf/
+.idea/sonarlint/
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+### LLM / AI agent configs (at any depth) ###
+**/.qwen
+**/.claude
+**/.agent
+**/.agents
+**/.agents.md
+**/.cursor
+**/.qoder
+**/.copilot
+**/.aider
+**/.continue
+**/AGENTS.md
+
+### Python venv ###
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+### Secrets & env ###
+.env
+.env.*
+*.env
+
+### Skill output (may contain API responses) ###
+output/
+tmp/
+
+### ETC ###
+docs
+ref
+*copilot*
+cache
+target
