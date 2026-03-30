@@ -2,10 +2,10 @@
   <img src="./assets/logo.png" width="160" alt="QwenCloud AI Skills" /> 
 </p>
 
-<h1 align="center">QwenCloud AI Skills</h1>
+<h1 align="center">Qwen Cloud AI Skills</h1>
 
 <p align="center">
-  Fold QwenCloud's AI skills into your agent. Just talk.
+  Fold Qwen Cloud's AI skills into your agent. Just talk.
 </p>
 
 <p align="center">

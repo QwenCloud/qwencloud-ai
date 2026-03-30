@@ -2,10 +2,10 @@
   <img src="./assets/logo.png" width="160" alt="QwenCloud AI Skills" />
 </p>
 
-<h1 align="center">QwenCloud AI Skills</h1>
+<h1 align="center">Qwen Cloud AI Skills</h1>
 
 <p align="center">
-  将 QwenCloud 的全套 AI 技能折叠进你的 Agent 里，你提需求就行。
+  将 Qwen Cloud 的全套 AI 技能折叠进你的 Agent 里，你提需求就行。
 </p>
 
 <p align="center">
