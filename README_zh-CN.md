@@ -1,12 +1,11 @@
 <p align="center">
-  <!-- TODO: 替换为项目 Logo -->
-  <!-- <img src="assets/logo.png" width="160" alt="QwenCloud AI Skills" /> -->
+  <img src="./assets/logo.png" width="160" alt="QwenCloud AI Skills" />
 </p>
 
 <h1 align="center">QwenCloud AI Skills</h1>
 
 <p align="center">
-  将 QwenCloud 的全套 AI 技能折进你的 Agent。说就行。
+  将 QwenCloud 的全套 AI 技能折叠进你的 Agent 里，你提需求就行。
 </p>
 
 <p align="center">

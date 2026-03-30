@@ -1,6 +1,5 @@
 <p align="center">
-  <!-- TODO: Replace with project logo -->
-  <!-- <img src="assets/logo.png" width="160" alt="QwenCloud AI Skills" /> -->
+  <img src="./assets/logo.png" width="160" alt="QwenCloud AI Skills" /> 
 </p>
 
 <h1 align="center">QwenCloud AI Skills</h1>
