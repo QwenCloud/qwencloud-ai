@@ -50,6 +50,7 @@ Scripts require a **standard QwenCloud API key** (`sk-...`). Coding Plan keys (`
 |-----------|------|-----------|
 | Generate video from text description only | **t2v** | `prompt` only |
 | Animate a single image | **i2v** | `img_url` or `reference_image` |
+| wan2.7 unified i2v: first frame, first+last frame, video continuation, audio sync | **i2v** | `media[]`, `first_frame_url`, `first_clip_url`, `driving_audio_url` |
 | Transition between two images (**⚠️ 5s fixed, silent only**) | **kf2v** | `first_frame_url` + `last_frame_url` |
 | Role-play: make characters act a new script | **r2v** | `reference_urls` (up to 5) |
 | Video editing: multi-image ref, repainting, local edit, extend, outpaint | **vace** | `function` |
@@ -58,7 +59,7 @@ Scripts require a **standard QwenCloud API key** (`sk-...`). Coding Plan keys (`
 
 1. **User specified a model** → use directly.
 2. **Consult the qwencloud-model-selector skill** when model choice depends on capability, scenario, or pricing.
-3. **No signal, clear task** → per-mode defaults: t2v → `wan2.6-t2v`, i2v → `wan2.6-i2v-flash`, kf2v → `wan2.2-kf2v-flash`, r2v → `wan2.6-r2v-flash`, vace → `wan2.1-vace-plus`.
+3. **No signal, clear task** → defaults: t2v → `wan2.6-t2v`, i2v → `wan2.6-i2v-flash`, kf2v → `wan2.2-kf2v-flash`, r2v → `wan2.6-r2v-flash`, vace → `wan2.1-vace-plus`. For wan2.7 features, explicitly set `--model wan2.7-t2v` or `--model wan2.7-i2v`.
 
 ## Models
 
@@ -66,7 +67,8 @@ Scripts require a **standard QwenCloud API key** (`sk-...`). Coding Plan keys (`
 
 | Model | Features |
 |-------|----------|
-| `wan2.6-t2v` **recommended** | Audio, multi-shot, 2–15s, 720P/1080P |
+| `wan2.7-t2v` | Ratio control, auto-dubbing, 5000 char prompt, 720P/1080P. Use `resolution` + `ratio` params. |
+| `wan2.6-t2v` **default** | Audio, multi-shot, 2–15s, 720P/1080P. Use `size` param. |
 | `wan2.5-t2v-preview` | Audio, 5s/10s, 480P/720P/1080P |
 | `wan2.2-t2v-plus` | Silent, 5s, 480P/1080P |
 
@@ -74,7 +76,8 @@ Scripts require a **standard QwenCloud API key** (`sk-...`). Coding Plan keys (`
 
 | Model | Features |
 |-------|----------|
-| `wan2.6-i2v-flash` **recommended** | Audio/silent, multi-shot, 2–15s, 720P/1080P |
+| `wan2.7-i2v` | Unified protocol: first frame, first+last frame, video continuation, audio sync. Uses `media[]` array. |
+| `wan2.6-i2v-flash` **default** | Audio/silent, multi-shot, 2–15s, 720P/1080P. Uses `img_url`. |
 | `wan2.6-i2v` | Audio, multi-shot, 2–15s, 720P/1080P |
 | `wan2.5-i2v-preview` | Audio, 5s/10s, 480P/720P/1080P |
 
@@ -90,6 +93,8 @@ Scripts require a **standard QwenCloud API key** (`sk-...`). Coding Plan keys (`
 > **⚠️ Important**: The model list above is a **point-in-time snapshot** and may be outdated. Model availability
 > changes frequently. **Always check the [official model list](https://www.qwencloud.com/models)
 > for the authoritative, up-to-date catalog before making model decisions.**
+
+> **Model details**: For more information about a specific model, direct the user to its detail page: `https://www.qwencloud.com/models/<model-name>` (replace `<model-name>` with the exact model ID, e.g. `wan2.7-t2v` → https://www.qwencloud.com/models/wan2.7-t2v). NEVER modify or guess the model name in the URL.
 
 ## Execution
 
@@ -201,15 +206,21 @@ the [official pricing page](https://docs.qwencloud.com/developer-guides/getting-
 
 | Model            | 720P (USD)         | 1080P (USD)        |
 |------------------|--------------------|--------------------|
+| wan2.7-t2v       | per-second billing | per-second billing |
+| wan2.7-i2v       | per-second billing | per-second billing |
 | wan2.6-t2v       | per-second billing | per-second billing |
 | wan2.6-i2v-flash | per-second billing | per-second billing |
 | wan2.6-r2v-flash | per-second billing | per-second billing |
 
 Quick example: wan2.6-t2v 5s 720P — check
 the [official pricing page](https://docs.qwencloud.com/developer-guides/getting-started/pricing) for current per-second
-rates. Some models may offer a limited free quota — verify availability in the
-user's [QwenCloud console](https://home.qwencloud.com/free-quota) before assuming any call
-is free.
+rates. Some models may offer a limited free quota — **do not assume any call is free**; the user should verify in their QwenCloud console.
+
+To check actual usage and bills: [Usage Analytics](https://home.qwencloud.com/analytics) |
+[Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
+[Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan)
+
+> **NEVER fabricate, guess, or construct usage/billing/console URLs.** Only provide the exact links listed in this skill. If a URL is not listed here, do not invent one.
 
 ## Local File Handling
 

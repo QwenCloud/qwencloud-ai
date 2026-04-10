@@ -27,6 +27,9 @@ I2I_ASYNC_PATH = "/services/aigc/image2image/image-synthesis"
 T2I_ASYNC_PATH = "/services/aigc/text2image/image-synthesis"
 
 _IMAGE_EDIT_MODELS: frozenset[str] = frozenset({"wan2.6-image"})
+_MULTI_FUNC_MODELS: frozenset[str] = frozenset({
+    "wan2.7-image-pro", "wan2.7-image",
+})  # Support both t2i and image editing, no reference_images required
 _I2I_MODELS: frozenset[str] = frozenset({"wan2.5-i2i-preview"})
 _QWEN_IMAGE_EDIT_MODELS: frozenset[str] = frozenset({
     "qwen-image-2.0-pro", "qwen-image-2.0",
@@ -49,6 +52,11 @@ _QWEN_IMAGE_EDIT_SINGLE_OUTPUT: frozenset[str] = frozenset({"qwen-image-edit"})
 def is_image_edit_model(model: str) -> bool:
     """Return True if model is a Wan image-editing model (requires reference images)."""
     return model in _IMAGE_EDIT_MODELS
+
+
+def is_multi_func_model(model: str) -> bool:
+    """Return True if model is a multi-function model (wan2.7 series, supports t2i + editing)."""
+    return model in _MULTI_FUNC_MODELS
 
 
 def is_i2i_model(model: str) -> bool:
@@ -87,7 +95,9 @@ def build_payload(req: dict[str, Any], model: str, api_key: str) -> dict[str, An
         raise ValueError("prompt is required")
 
     enable_interleave = req.get("enable_interleave", False)
+    enable_sequential = req.get("enable_sequential", False)
     is_wan_edit = is_image_edit_model(model)
+    is_wan_multi = is_multi_func_model(model)
     is_qwen_edit = is_qwen_image_edit_model(model)
     content: list[dict[str, Any]] = [{"text": prompt}]
 
@@ -130,6 +140,15 @@ def build_payload(req: dict[str, Any], model: str, api_key: str) -> dict[str, An
             raise ValueError("Interleaved text-image mode supports at most 1 reference image")
         for img in images:
             content.append({"image": _resolve_file_url(str(img), api_key, model)})
+    elif is_wan_multi:
+        # wan2.7 series: supports 0-9 images
+        images = req.get("reference_images") or []
+        if not images and req.get("reference_image"):
+            images = [req["reference_image"]]
+        if len(images) > 9:
+            raise ValueError("wan2.7 series supports at most 9 reference images")
+        for img in images:
+            content.append({"image": _resolve_file_url(str(img), api_key, model)})
     elif is_qwen_edit:
         images = req.get("reference_images") or []
         if not images and req.get("reference_image"):
@@ -156,6 +175,29 @@ def build_payload(req: dict[str, Any], model: str, api_key: str) -> dict[str, An
             parameters["n"] = req.get("n", 1)
             parameters["prompt_extend"] = req.get("prompt_extend", True)
         parameters["watermark"] = req.get("watermark", False)
+    elif is_wan_multi:
+        # wan2.7 series parameters
+        parameters = {"size": req.get("size", "2K")}  # Default 2K for wan2.7
+        parameters["enable_sequential"] = enable_sequential
+        if enable_sequential:
+            # Sequential mode: n=1-12
+            parameters["n"] = min(req.get("n", 12), 12)
+        else:
+            # Non-sequential: n=1-4
+            parameters["n"] = min(req.get("n", 4), 4)
+        # thinking_mode: default true (only for t2i without sequential)
+        images = req.get("reference_images") or []
+        if not images and req.get("reference_image"):
+            images = [req["reference_image"]]
+        if not enable_sequential and not images:
+            parameters["thinking_mode"] = req.get("thinking_mode", True)
+        parameters["watermark"] = req.get("watermark", False)
+        # bbox_list for interactive editing
+        if req.get("bbox_list"):
+            parameters["bbox_list"] = req["bbox_list"]
+        # color_palette for custom colors (only non-sequential)
+        if not enable_sequential and req.get("color_palette"):
+            parameters["color_palette"] = req["color_palette"]
     elif is_qwen_edit:
         parameters = {"size": req.get("size", "1024*1024")}
         if model in _QWEN_IMAGE_EDIT_SINGLE_OUTPUT:

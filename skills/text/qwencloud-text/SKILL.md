@@ -46,9 +46,10 @@ see its `references/codingplan.md` for details on key types, endpoint mapping, a
 
 | Model              | Use Case                                                                |
 |--------------------|-------------------------------------------------------------------------|
-| `qwen3.5-plus`     | **Recommended default** — balanced performance, cost, speed, 1M context |
+| `qwen3.6-plus`     | **Recommended default** — latest flagship, balanced performance/cost/speed, 1M context, thinking on by default, multimodal (text+image+video) |
+| `qwen3.5-plus`     | Balanced performance, cost, speed, 1M context, thinking on by default   |
 | `qwen3.5-flash`    | Fast, low-cost, 1M context                                              |
-| `qwen3-max`        | Strongest capability                                                    |
+| `qwen3-max`        | Strongest capability, built-in tools (web search, code interpreter)     |
 | `qwen-plus`        | General purpose                                                         |
 | `qwen-turbo`       | Cheapest, low latency                                                   |
 | `qwen3-coder-next` | **Recommended code model** — best balance of quality, speed, cost; agentic coding |
@@ -64,13 +65,15 @@ see its `references/codingplan.md` for details on key types, endpoint mapping, a
 
 1. **User specified a model** → use directly.
 2. **Consult the qwencloud-model-selector skill** when model choice depends on requirement, scenario, or pricing.
-3. **No signal, clear task** → `qwen3.5-plus` (default).
+3. **No signal, clear task** → `qwen3.6-plus` (default).
 
 > Fallback: if model-selector is unavailable, the defaults in the table above apply.
 
 > **⚠️ Important**: The model list above is a **point-in-time snapshot** and may be outdated. Model availability
 > changes frequently. **Always check the [official model list](https://www.qwencloud.com/models)
 > for the authoritative, up-to-date catalog before making model decisions.**
+
+> **Model details**: For more information about a specific model, direct the user to its detail page: `https://www.qwencloud.com/models/<model-name>` (replace `<model-name>` with the exact model ID, e.g. `qwen3.6-plus` → https://www.qwencloud.com/models/qwen3.6-plus). NEVER modify or guess the model name in the URL.
 
 ## Execution
 
@@ -108,7 +111,7 @@ execution.
 
 ```bash
 python3 <this-skill-dir>/scripts/text.py \
-  --request '{"messages":[{"role":"user","content":"Hello!"}],"model":"qwen3.5-plus"}' \
+  --request '{"messages":[{"role":"user","content":"Hello!"}],"model":"qwen3.6-plus"}' \
   --output output/qwencloud-text/ --print-response
 ```
 
@@ -116,7 +119,7 @@ For streaming (recommended for interactive use):
 
 ```bash
 python3 <this-skill-dir>/scripts/text.py \
-  --request '{"messages":[{"role":"user","content":"Write a poem about the sea"}],"model":"qwen3.5-plus"}' \
+  --request '{"messages":[{"role":"user","content":"Write a poem about the sea"}],"model":"qwen3.6-plus"}' \
   --stream --print-response
 ```
 
@@ -168,13 +171,13 @@ in [execution-guide.md](references/execution-guide.md).
 | Field                 | Type            | Description                                                                                          |
 |-----------------------|-----------------|------------------------------------------------------------------------------------------------------|
 | `prompt` / `messages` | string \| array | User input or message list                                                                           |
-| `model`               | string          | Model ID (e.g. `qwen3.5-plus`)                                                                       |
+| `model`               | string          | Model ID (e.g. `qwen3.6-plus`)                                                                       |
 | `system`              | string          | System prompt (optional)                                                                             |
 | `temperature`         | float           | 0–2, controls randomness                                                                             |
 | `max_tokens`          | int             | Max output tokens                                                                                    |
 | `tools`               | array           | Function definitions for tool calling                                                                |
 | `stream`              | bool            | Enable streaming (recommended for interactive use)                                                   |
-| `enable_thinking`     | bool            | Enable thinking mode. **Model defaults apply**: `qwen3.5-plus`/`qwen3.5-flash` have thinking **ON by default**. Only set explicitly when user requests deep thinking or needs to disable for flash models. Adds latency for real-time tasks. |
+| `enable_thinking`     | bool            | Enable thinking mode. **Model defaults apply**: `qwen3.6-plus`/`qwen3.5-plus`/`qwen3.5-flash` have thinking **ON by default**. Only set explicitly when user requests deep thinking or needs to disable for flash models. Adds latency for real-time tasks. |
 
 ### Response Fields
 
@@ -211,6 +214,13 @@ For detailed usage of each feature, see [api-guide.md](references/api-guide.md) 
 | `Invalid model`         | Model ID not found                  | Verify model name against Model Selection table                                            |
 | `Invalid parameter`     | Bad request body                    | Validate JSON and field types                                                              |
 | `TypeError: ...proxies` | openai SDK vs httpx incompatibility | `pip install --upgrade openai` (>=1.55.0); or use script (pure stdlib)                     |
+
+> **Usage & billing**: To check actual usage or spending, direct the user to the QwenCloud console:
+> [Usage Analytics](https://home.qwencloud.com/analytics) |
+> [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
+> [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan)
+>
+> **NEVER fabricate, guess, or construct usage/billing/console URLs.** Only provide the exact links listed in this skill. If a URL is not listed here, do not invent one.
 
 ## Output Location
 

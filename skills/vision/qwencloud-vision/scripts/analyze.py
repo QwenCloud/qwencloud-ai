@@ -37,7 +37,7 @@ from vision_lib import (  # noqa: E402
     build_content,
 )
 
-DEFAULT_MODEL = "qwen3.5-plus"
+DEFAULT_MODEL = "qwen3.6-plus"
 DEFAULT_MAX_TOKENS = 512
 DEFAULT_TEMPERATURE = 0.2
 DEFAULT_DETAIL = "auto"
@@ -208,7 +208,7 @@ request JSON fields (--request / --file):
   video               Video URL or local path
   video_frames        Array of frame image URLs/paths (alternative to video)
   fps                 Frame sampling rate for video (default: auto)
-  model               Model ID (default: qwen3.5-plus)
+  model               Model ID (default: qwen3.6-plus)
   detail              Image detail level: "auto" | "low" | "high"
   json_mode           true — request JSON-only output (also via --json-mode)
   schema              JSON Schema object for structured extraction

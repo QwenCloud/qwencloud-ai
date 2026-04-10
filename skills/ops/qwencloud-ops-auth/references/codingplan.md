@@ -75,6 +75,11 @@ All scripts call DashScope directly via `urllib.request` and are **not** recogni
 3. **QWEN_BASE_URL set to coding-intl**: "Coding Plan is currently only available for Coding Agents". Scripts warn on detection.
 4. **Coding Plan quota exhausted**: Hard fail, no fallback. Users must wait for reset or upgrade.
 
+To verify actual charges, direct users to the appropriate billing page:
+- Pay-as-you-go: [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go)
+- Coding Plan: [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan)
+- Usage analytics: [Usage Analytics](https://home.qwencloud.com/analytics)
+
 ## Resolution
 
 Both key types can coexist. A user can have:

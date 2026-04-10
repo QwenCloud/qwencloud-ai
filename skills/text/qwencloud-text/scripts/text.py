@@ -162,11 +162,11 @@ examples:
     parser.add_argument("--output", default="output/qwencloud-text",
                         help="Directory to save response JSON (default: output/qwencloud-text)")
     parser.add_argument("--print-response", action="store_true", help="Print generated text to stdout")
-    parser.add_argument("--model", default="qwen3.5-plus", help="Model ID (default: qwen3.5-plus)")
+    parser.add_argument("--model", default="qwen3.6-plus", help="Model ID (default: qwen3.6-plus)")
     parser.add_argument("--stream", action="store_true", help="Enable streaming response (SSE)")
     parser.add_argument("--enable-thinking", action="store_true", dest="enable_thinking_flag",
                         help="Enable chain-of-thought thinking mode (overrides model defaults). "
-                             "Recommended for complex reasoning/math tasks. Adds latency for qwen3.5-plus/flash.")
+                             "Recommended for complex reasoning/math tasks. Adds latency for qwen3.6-plus/qwen3.5-plus/flash.")
     parser.add_argument("--hide-reasoning", action="store_true",
                         help="Suppress reasoning process output to stderr (reasoning still saved to JSON)")
     args = parser.parse_args()
@@ -183,10 +183,10 @@ examples:
     # Thinking mode handling:
     # - User explicitly enabled via flag → set true
     # - User specified in request JSON → respect their choice  
-    # - Otherwise → let API apply model defaults (qwen3.5-plus/flash have thinking ON by default)
+    # - Otherwise → let API apply model defaults (qwen3.6-plus/qwen3.5-plus/flash have thinking ON by default)
     if args.enable_thinking_flag:
         request["enable_thinking"] = True
-        print("Note: Thinking mode enabled explicitly. May add latency for qwen3.5-plus/flash.", file=sys.stderr)
+        print("Note: Thinking mode enabled explicitly. May add latency for qwen3.6-plus/qwen3.5-plus/flash.", file=sys.stderr)
     elif "enable_thinking" not in request:
         # Do nothing - preserve API defaults per model
         pass

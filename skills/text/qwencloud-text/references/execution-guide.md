@@ -22,7 +22,7 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/co
   -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "qwen3.5-plus",
+    "model": "qwen3.6-plus",
     "messages": [
       {"role": "system", "content": "You are a helpful assistant."},
       {"role": "user", "content": "Hello!"}
@@ -46,7 +46,7 @@ curl -sS --no-buffer -X POST "https://dashscope-intl.aliyuncs.com/compatible-mod
   -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "qwen3.5-plus",
+    "model": "qwen3.6-plus",
     "messages": [{"role": "user", "content": "Write a haiku."}],
     "stream": true
   }'
@@ -78,7 +78,7 @@ client = OpenAI(
 )
 
 response = client.chat.completions.create(
-    model="qwen3.5-plus",
+    model="qwen3.6-plus",
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": "Hello!"},
@@ -117,7 +117,7 @@ tools = [
 ]
 
 response = client.chat.completions.create(
-    model="qwen3.5-plus",
+    model="qwen3.6-plus",
     messages=[{"role": "user", "content": "What is the weather in Beijing?"}],
     tools=tools,
 )
@@ -126,11 +126,11 @@ response = client.chat.completions.create(
 
 ## Thinking Mode
 
-Qwen3.5 models support `enable_thinking` for extended reasoning. When enabled, the model may return thinking content before the final answer. **Do not enable by default** — only set `enable_thinking: true` when the user explicitly asks for deep thinking, step-by-step reasoning, or chain-of-thought. Keeping it off improves response speed for simple or conversational requests.
+Qwen3.6/Qwen3.5 models support `enable_thinking` for extended reasoning. When enabled, the model may return thinking content before the final answer. **Do not enable by default** — only set `enable_thinking: true` when the user explicitly asks for deep thinking, step-by-step reasoning, or chain-of-thought. Keeping it off improves response speed for simple or conversational requests.
 
 ```python
 response = client.chat.completions.create(
-    model="qwen3.5-plus",
+    model="qwen3.6-plus",
     messages=[{"role": "user", "content": "Solve: 17 * 23 step by step."}],
     extra_body={"enable_thinking": True},
 )

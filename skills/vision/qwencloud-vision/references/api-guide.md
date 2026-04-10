@@ -1,6 +1,6 @@
 # Qwen Vision — API Supplementary Guide
 
-> **Content validity**: 2026-03 | **Sources**: [Vision API (OpenAI compatible)](https://docs.qwencloud.com/developer-guides/multimodal/vision) · [Vision Best Practices](https://docs.qwencloud.com/developer-guides/multimodal/vision)
+> **Content validity**: 2026-04 | **Sources**: [Vision API (OpenAI compatible)](https://docs.qwencloud.com/developer-guides/multimodal/vision) · [Vision Best Practices](https://docs.qwencloud.com/developer-guides/multimodal/vision)
 
 ---
 
@@ -14,16 +14,17 @@ Qwen-VL vision-language models accessed through the **OpenAI-compatible** interf
 
 | Scenario | Recommended Model | Notes |
 |----------|------------------|-------|
-| General image/video understanding | `qwen3.5-plus` | **Preferred choice.** Latest-gen unified multimodal (text+image+video). Thinking on by default. |
+| General image/video understanding | `qwen3.6-plus` | **Preferred choice.** Latest flagship unified multimodal (text+image+video). Thinking on by default. 1M context. |
+| General image/video understanding (alt) | `qwen3.5-plus` | Unified multimodal (text+image+video). Thinking on by default. 1M context. |
 | Fast multimodal | `qwen3.5-flash` | Cheaper and faster. Thinking on by default. |
 | High-precision localization / document parsing | `qwen3-vl-plus` | Best for 2D/3D object localization, agent tool calling, QwenVL HTML/Markdown parsing. |
 | High throughput / low latency vision | `qwen3-vl-flash` | 33 languages. Tool calling. |
 | Deep visual reasoning | `qvq-max` | Chain-of-thought reasoning. **Streaming output only.** |
 | OCR text recognition | `qwen-vl-ocr` | Specialized optimization, highest accuracy. See [ocr.md](ocr.md). |
-| Chart / table extraction | `qwen3.5-plus` / `qwen3-vl-plus` + JSON Schema | Structured output (non-thinking mode). |
-| Video understanding | `qwen3.5-plus` | Up to 2h video. Use `fps` to control frame extraction. |
-| Video reasoning | `qvq-max` / `qwen3.5-plus` | Chain-of-thought analysis of video content. QVQ: 2s-10min; Qwen3.5: up to 2h. |
-| Agent tool calling | `qwen3.5-plus` / `qwen3-vl-plus` / `qwen3-vl-flash` | Function calling support. |
+| Chart / table extraction | `qwen3.6-plus` / `qwen3.5-plus` / `qwen3-vl-plus` + JSON Schema | Structured output (non-thinking mode). |
+| Video understanding | `qwen3.6-plus` / `qwen3.5-plus` | Up to 2h video. Use `fps` to control frame extraction. |
+| Video reasoning | `qvq-max` / `qwen3.6-plus` / `qwen3.5-plus` | Chain-of-thought analysis of video content. QVQ: 2s-10min; Qwen3.6/3.5: up to 2h. |
+| Agent tool calling | `qwen3.6-plus` / `qwen3.5-plus` / `qwen3-vl-plus` / `qwen3-vl-flash` | Function calling support. |
 
 ---
 
@@ -46,7 +47,7 @@ resp = client.chat.completions.create(
         "role": "user",
         "content": [
             {"type": "text", "text": "What is in this image?"},
-            {"type": "image_url", "image_url": {"url": "https://example.com/photo.jpg"}}
+            {"type": "image_url", "image_url": {"url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20241022/emyrja/dog_and_girl.jpeg"}}
         ]
     }],
 )
@@ -84,8 +85,8 @@ resp = client.chat.completions.create(
         "role": "user",
         "content": [
             {"type": "text", "text": "Compare these two images."},
-            {"type": "image_url", "image_url": {"url": "https://example.com/img1.jpg"}},
-            {"type": "image_url", "image_url": {"url": "https://example.com/img2.jpg"}}
+            {"type": "image_url", "image_url": {"url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20241022/emyrja/dog_and_girl.jpeg"}},
+            {"type": "image_url", "image_url": {"url": "https://img.alicdn.com/imgextra/i2/O1CN01ktT8451iQutqReELT_!!6000000004408-0-tps-689-487.jpg"}}
         ]
     }],
 )
@@ -95,11 +96,11 @@ resp = client.chat.completions.create(
 
 ```python
 resp = client.chat.completions.create(
-    model="qwen3.5-plus",
+    model="qwen3.6-plus",
     messages=[{
         "role": "user",
         "content": [
-            {"type": "video_url", "video_url": {"url": "https://example.com/video.mp4"}, "fps": 2},
+            {"type": "video_url", "video_url": {"url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/video.mp4"}, "fps": 2},
             {"type": "text", "text": "Describe what happens in this video."},
         ]
     }],
@@ -112,15 +113,15 @@ Pass pre-extracted video frames as an image list. The `fps` parameter tells the 
 
 ```python
 resp = client.chat.completions.create(
-    model="qwen3.5-plus",
+    model="qwen3.6-plus",
     messages=[{
         "role": "user",
         "content": [
             {"type": "video", "video": [
-                "https://example.com/frame1.jpg",
-                "https://example.com/frame2.jpg",
-                "https://example.com/frame3.jpg",
-                "https://example.com/frame4.jpg",
+                "https://img.alicdn.com/imgextra/i1/NotRealJustExample/frame1.jpg",
+                "https://img.alicdn.com/imgextra/i1/NotRealJustExample/frame2.jpg",
+                "https://img.alicdn.com/imgextra/i1/NotRealJustExample/frame3.jpg",
+                "https://img.alicdn.com/imgextra/i1/NotRealJustExample/frame4.jpg",
             ], "fps": 2},
             {"type": "text", "text": "Describe the action in this video."},
         ]
@@ -134,11 +135,11 @@ Enable deep thinking for complex visual analysis (math problems, charts, multi-s
 
 ```python
 stream = client.chat.completions.create(
-    model="qwen3.5-plus",
+    model="qwen3.6-plus",
     messages=[{
         "role": "user",
         "content": [
-            {"type": "image_url", "image_url": {"url": "https://example.com/chart.png"}},
+            {"type": "image_url", "image_url": {"url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/chart.png"}},
             {"type": "text", "text": "Analyze the trends step by step."},
         ]
     }],
@@ -167,7 +168,7 @@ stream = client.chat.completions.create(
     messages=[{
         "role": "user",
         "content": [
-            {"type": "video_url", "video_url": {"url": "https://example.com/clip.mp4"}, "fps": 2},
+            {"type": "video_url", "video_url": {"url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/clip.mp4"}, "fps": 2},
             {"type": "text", "text": "Analyze what happens in this video and explain why."},
         ]
     }],
@@ -189,11 +190,11 @@ For images with fine text, small objects, or rich detail, enable `vl_high_resolu
 
 ```python
 resp = client.chat.completions.create(
-    model="qwen3.5-plus",
+    model="qwen3.6-plus",
     messages=[{
         "role": "user",
         "content": [
-            {"type": "image_url", "image_url": {"url": "https://example.com/fine-text.jpg"}},
+            {"type": "image_url", "image_url": {"url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/fine-text.jpg"}},
             {"type": "text", "text": "Read all text in this image."},
         ]
     }],
@@ -221,7 +222,7 @@ stream = client.chat.completions.create(
         "role": "user",
         "content": [
             {"type": "text", "text": "Describe this image in detail."},
-            {"type": "image_url", "image_url": {"url": "https://example.com/photo.jpg"}}
+            {"type": "image_url", "image_url": {"url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20241022/emyrja/dog_and_girl.jpeg"}}
         ]
     }],
     stream=True,
@@ -236,7 +237,7 @@ for chunk in stream:
 
 | Parameter | Description |
 |-----------|-------------|
-| `model` | `qwen3.5-plus` (preferred), `qwen3.5-flash`, `qwen3-vl-plus`, `qwen3-vl-flash`, `qvq-max`, `qwen-vl-ocr`. |
+| `model` | `qwen3.6-plus` (preferred), `qwen3.5-plus`, `qwen3.5-flash`, `qwen3-vl-plus`, `qwen3-vl-flash`, `qvq-max`, `qwen-vl-ocr`. |
 | `messages` | Multimodal message array. The `content` field mixes `text`, `image_url`, `video_url`, and `video` (image list) objects. |
 | `temperature` | Controls randomness [0, 2). For precise extraction, use 0.1–0.2. |
 | `max_tokens` | Maximum output tokens. |
@@ -246,7 +247,7 @@ for chunk in stream:
 | `enable_thinking` | Enable chain-of-thought reasoning. Pass via `extra_body` (OpenAI SDK) or top-level (HTTP). See [visual-reasoning.md](visual-reasoning.md). |
 | `thinking_budget` | Max tokens for reasoning process. Controls thinking depth and cost. Pass via `extra_body` (OpenAI SDK). |
 | `vl_high_resolution_images` | Maximize image resolution (up to 16384 visual tokens). Pass via `extra_body` (OpenAI SDK). |
-| `tools` | Function calling definitions. Supported by qwen3.5-plus/flash, qwen3-vl-plus/flash. |
+| `tools` | Function calling definitions. Supported by qwen3.6-plus/qwen3.5-plus/flash, qwen3-vl-plus/flash. |
 | `min_pixels` / `max_pixels` | Pixel control for image resolution. Set inside `image_url` object. Active when `vl_high_resolution_images` is false/unset. |
 
 ### File Input Methods
@@ -257,7 +258,7 @@ The OpenAI-compatible API accepts: **HTTP/HTTPS URL**, **Base64 data URI**, and 
 
 | Method | Format | Size Limit | Best For |
 |--------|--------|-----------|----------|
-| Online URL | `https://example.com/image.jpg` | 20 MB (Qwen3.5) / 10 MB (others) for images; up to 2 GB for videos | **Videos, large images, production use** |
+| Online URL | `https://img.alicdn.com/imgextra/i1/NotRealJustExample/image.jpg` | 20 MB (Qwen3.5) / 10 MB (others) for images; up to 2 GB for videos | **Videos, large images, production use** |
 | Base64 data URI | `data:image/jpeg;base64,/9j/...` | < 7 MB original file only | Small local files (images, short video clips) |
 | Temp upload (`oss://`) | `oss://dashscope-instant/...` | Up to 100 MB (local upload) | **Local videos, large local files** |
 
@@ -270,10 +271,10 @@ The OpenAI-compatible API accepts: **HTTP/HTTPS URL**, **Base64 data URI**, and 
 
 ## Important Notes
 
-1. **Qwen3.5 is the preferred choice.** `qwen3.5-plus` is the latest-gen unified multimodal model — excels at image understanding, video understanding, document parsing, visual programming, and multimodal agents. Use `qwen3-vl-plus` when precise 2D/3D localization is needed.
+1. **Qwen3.6-Plus is the preferred choice.** `qwen3.6-plus` is the latest flagship unified multimodal model — excels at image understanding, video understanding, document parsing, visual programming, and multimodal agents. Use `qwen3-vl-plus` when precise 2D/3D localization is needed.
 2. **Larger images consume more tokens.** Use `detail: "low"` when fine detail is not needed. Use `vl_high_resolution_images: true` only for fine text or small objects.
 3. **QVQ models support streaming output only.** `qvq-max` requires `stream=True`. Non-streaming calls will return an error.
-4. **Structured output requires non-thinking mode.** JSON Schema output is only supported when `enable_thinking` is `false`. For Qwen3.5 (thinking on by default), explicitly set `enable_thinking: false` when using structured output.
+4. **Structured output requires non-thinking mode.** JSON Schema output is only supported when `enable_thinking` is `false`. For Qwen3.6/Qwen3.5 (thinking on by default), explicitly set `enable_thinking: false` when using structured output.
 5. **Video fps parameter.** Use `fps` to control frame extraction frequency. High-speed motion: higher fps. Static/long videos: lower fps for efficiency.
 6. **Use the dedicated model for OCR.** `qwen-vl-ocr` is optimized for text recognition and achieves higher accuracy than general VL models.
 7. **Multi-turn conversations preserve context.** Alternate `user` and `assistant` roles in messages. The model remembers previously provided images.
@@ -284,8 +285,8 @@ The OpenAI-compatible API accepts: **HTTP/HTTPS URL**, **Base64 data URI**, and 
 
 ## FAQ
 
-**Q: Should I use qwen3.5-plus or qwen3-vl-plus?**
-A: Use `qwen3.5-plus` as the default — it's the latest unified multimodal model that excels at both text and vision tasks. Use `qwen3-vl-plus` when you need precise object localization (2D/3D bounding boxes), document parsing to QwenVL HTML/Markdown format, or agent tool calling with vision.
+**Q: Should I use qwen3.6-plus, qwen3.5-plus, or qwen3-vl-plus?**
+A: Use `qwen3.6-plus` as the default — it's the latest flagship unified multimodal model that excels at both text and vision tasks. `qwen3.5-plus` is also a strong multimodal choice with the same 1M context. Use `qwen3-vl-plus` when you need precise object localization (2D/3D bounding boxes), document parsing to QwenVL HTML/Markdown format, or agent tool calling with vision.
 
 **Q: How do I reduce token consumption for image understanding?**
 A: (1) Set `detail: "low"` to reduce image tokens. (2) Crop or resize the image to the relevant area. (3) Use the flash model. (4) Don't set `vl_high_resolution_images: true` unless needed.
@@ -294,13 +295,13 @@ A: (1) Set `detail: "low"` to reduce image tokens. (2) Crop or resize the image 
 A: Yes. Pass multiple `image_url` objects in the `content` array, along with a text instruction (e.g., "Compare these images", "Find the differences").
 
 **Q: How long a video can the model understand?**
-A: Qwen3.5 supports up to 2 hours, Qwen3-VL-Plus up to 1 hour. Use `fps` to control frame extraction. Lower fps for long videos. Videos are frame-sampled; audio is not supported.
+A: Qwen3.6/Qwen3.5 supports up to 2 hours, Qwen3-VL-Plus up to 1 hour. Use `fps` to control frame extraction. Lower fps for long videos. Videos are frame-sampled; audio is not supported.
 
 **Q: How do I extract table data from an image?**
-A: Use `qwen3.5-plus` (with `enable_thinking: false`) or `qwen3-vl-plus` with JSON Schema structured output. The skill script supports `--schema`.
+A: Use `qwen3.6-plus` (with `enable_thinking: false`) or `qwen3-vl-plus` with JSON Schema structured output. The skill script supports `--schema`.
 
 **Q: How do I use local images/videos?**
 A: Pass the file path directly (`"image": "/path/to/file.jpg"`). By default the script converts to Base64 — this only works for files **< 7 MB**. For larger files or videos, **always** add `--upload-files` to auto-upload to DashScope temp storage (oss:// URL, 48 h TTL). When using the OpenAI SDK directly, upload the file to get a URL first — do NOT base64-encode large files.
 
 **Q: When should I enable thinking mode?**
-A: Enable for complex tasks: math problems, chart analysis, multi-step reasoning. Don't enable for simple tasks (captioning, basic Q&A) — it increases latency and cost. Qwen3.5 has thinking on by default; disable with `enable_thinking: false` for simple tasks.
+A: Enable for complex tasks: math problems, chart analysis, multi-step reasoning. Don't enable for simple tasks (captioning, basic Q&A) — it increases latency and cost. Qwen3.6/Qwen3.5 has thinking on by default; disable with `enable_thinking: false` for simple tasks.

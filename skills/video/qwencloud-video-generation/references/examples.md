@@ -22,7 +22,7 @@ python3 scripts/video.py \
 
 ```bash
 python3 scripts/video.py \
-  --request '{"prompt":"A cat general on a cliff","audio_url":"https://example.com/bgm.mp3","size":"1280*720","duration":10}' \
+  --request '{"prompt":"A cat general on a cliff","audio_url":"https://img.alicdn.com/imgextra/i1/NotRealJustExample/bgm.mp3","size":"1280*720","duration":10}' \
   --model wan2.6-t2v --print-response
 ```
 
@@ -30,7 +30,7 @@ python3 scripts/video.py \
 
 ```bash
 python3 scripts/video.py \
-  --request '{"prompt":"A cat running on grass","img_url":"https://example.com/frame.png","resolution":"720P","duration":5}' \
+  --request '{"prompt":"A cat running on grass","img_url":"https://img.alicdn.com/imgextra/i1/NotRealJustExample/frame.png","resolution":"720P","duration":5}' \
   --print-response
 ```
 
@@ -46,7 +46,7 @@ python3 scripts/video.py \
 
 ```bash
 python3 scripts/video.py \
-  --request '{"prompt":"A cat looks up to the sky","first_frame_url":"https://example.com/first.png","last_frame_url":"https://example.com/last.png","resolution":"720P"}' \
+  --request '{"prompt":"A cat looks up to the sky","first_frame_url":"https://img.alicdn.com/imgextra/i1/NotRealJustExample/first.png","last_frame_url":"https://img.alicdn.com/imgextra/i1/NotRealJustExample/last.png","resolution":"720P"}' \
   --print-response
 ```
 
@@ -54,7 +54,7 @@ python3 scripts/video.py \
 
 ```bash
 python3 scripts/video.py \
-  --request '{"prompt":"character1 says hello to character2","reference_urls":["https://example.com/person.mp4","https://example.com/person2.png"],"size":"1280*720","duration":5,"shot_type":"multi"}' \
+  --request '{"prompt":"character1 says hello to character2","reference_urls":["https://img.alicdn.com/imgextra/i1/NotRealJustExample/person.mp4","https://img.alicdn.com/imgextra/i1/NotRealJustExample/person2.png"],"size":"1280*720","duration":5,"shot_type":"multi"}' \
   --model wan2.6-r2v-flash --print-response
 ```
 
@@ -62,7 +62,7 @@ python3 scripts/video.py \
 
 ```bash
 python3 scripts/video.py \
-  --request '{"function":"image_reference","prompt":"A girl walks through a forest","ref_images_url":["https://example.com/girl.png","https://example.com/forest.png"],"obj_or_bg":["obj","bg"],"size":"1280*720"}' \
+  --request '{"function":"image_reference","prompt":"A girl walks through a forest","ref_images_url":["https://img.alicdn.com/imgextra/i1/NotRealJustExample/girl.png","https://img.alicdn.com/imgextra/i1/NotRealJustExample/forest.png"],"obj_or_bg":["obj","bg"],"size":"1280*720"}' \
   --model wan2.1-vace-plus --print-response
 ```
 
@@ -70,7 +70,7 @@ python3 scripts/video.py \
 
 ```bash
 python3 scripts/video.py \
-  --request '{"function":"video_repainting","prompt":"A steampunk car driving through a city","video_url":"https://example.com/driving.mp4","control_condition":"depth","prompt_extend":false}' \
+  --request '{"function":"video_repainting","prompt":"A steampunk car driving through a city","video_url":"https://img.alicdn.com/imgextra/i1/NotRealJustExample/driving.mp4","control_condition":"depth","prompt_extend":false}' \
   --model wan2.1-vace-plus --print-response
 ```
 
@@ -78,7 +78,7 @@ python3 scripts/video.py \
 
 ```bash
 python3 scripts/video.py \
-  --request '{"function":"video_edit","prompt":"A lion in a suit drinking coffee","video_url":"https://example.com/cafe.mp4","mask_image_url":"https://example.com/mask.png","mask_frame_id":1,"mask_type":"tracking","prompt_extend":false}' \
+  --request '{"function":"video_edit","prompt":"A lion in a suit drinking coffee","video_url":"https://img.alicdn.com/imgextra/i1/NotRealJustExample/cafe.mp4","mask_image_url":"https://img.alicdn.com/imgextra/i1/NotRealJustExample/mask.png","mask_frame_id":1,"mask_type":"tracking","prompt_extend":false}' \
   --model wan2.1-vace-plus --print-response
 ```
 
@@ -86,7 +86,7 @@ python3 scripts/video.py \
 
 ```bash
 python3 scripts/video.py \
-  --request '{"function":"video_extension","prompt":"A dog skateboarding, 3D cartoon","first_clip_url":"https://example.com/clip.mp4","prompt_extend":false}' \
+  --request '{"function":"video_extension","prompt":"A dog skateboarding, 3D cartoon","first_clip_url":"https://img.alicdn.com/imgextra/i1/NotRealJustExample/clip.mp4","prompt_extend":false}' \
   --model wan2.1-vace-plus --print-response
 ```
 
@@ -94,6 +94,6 @@ python3 scripts/video.py \
 
 ```bash
 python3 scripts/video.py \
-  --request '{"function":"video_outpainting","prompt":"A woman plays violin with an orchestra behind her","video_url":"https://example.com/violin.mp4","top_scale":1.5,"bottom_scale":1.5,"left_scale":1.5,"right_scale":1.5,"prompt_extend":false}' \
+  --request '{"function":"video_outpainting","prompt":"A woman plays violin with an orchestra behind her","video_url":"https://img.alicdn.com/imgextra/i1/NotRealJustExample/violin.mp4","top_scale":1.5,"bottom_scale":1.5,"left_scale":1.5,"right_scale":1.5,"prompt_extend":false}' \
   --model wan2.1-vace-plus --print-response
 ```

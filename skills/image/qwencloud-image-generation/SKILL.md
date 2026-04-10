@@ -40,10 +40,10 @@ Scripts require a **standard QwenCloud API key** (`sk-...`). Coding Plan keys (`
 
 | User Want | Mode | Model |
 |-----------|------|-------|
-| Generate image from text only | **t2i** | `wan2.6-t2i` (default) |
-| Edit image / apply style transfer based on 1–4 reference images | **image-edit** | `wan2.6-image` |
-| Subject consistency: generate new images maintaining subject from references | **image-edit** | `wan2.6-image` |
-| Multi-image composition: combine style from one image, background from another | **image-edit** | `wan2.6-image` |
+| Generate image from text only | **t2i** | `wan2.6-t2i` (default), or `wan2.7-image` / `wan2.7-image-pro` |
+| Edit image / apply style transfer based on 1–4 reference images | **image-edit** | `wan2.7-image-pro` / `wan2.7-image` / `wan2.6-image` |
+| Subject consistency: generate new images maintaining subject from references | **image-edit** | `wan2.7-image-pro` / `wan2.7-image` / `wan2.6-image` |
+| Multi-image composition: combine style from one image, background from another | **image-edit** | `wan2.7-image-pro` / `wan2.7-image` / `wan2.6-image` |
 | Single-image editing preserving subject consistency | **i2i** | `wan2.5-i2i-preview` |
 | Multi-image fusion: place object from one image into another scene | **i2i** | `wan2.5-i2i-preview` |
 | Interleaved text-image output (e.g., tutorials, step-by-step guides) | **interleave** | `wan2.6-image` |
@@ -60,7 +60,9 @@ Scripts require a **standard QwenCloud API key** (`sk-...`). Coding Plan keys (`
 | Model | Use Case |
 |-------|----------|
 | **wan2.6-t2i** | **Recommended for text-to-image** — sync + async, best quality |
-| **wan2.6-image** | **Image editing ONLY** (NOT for pure text-to-image) — requires `reference_images` or `enable_interleave: true`. Style transfer, subject consistency (1–4 images), interleaved text-image output, 2K |
+| **wan2.7-image-pro** | **Multi-function** (4K support) — text-to-image, image editing (0–9 images), sequential multi-image, interactive editing (bbox), thinking mode, color palette. Max 4K for t2i, 2K for editing |
+| **wan2.7-image** | **Multi-function** (faster) — same as pro but max 2K, no 4K support |
+| **wan2.6-image** | **Image editing** (NOT for pure text-to-image) — requires `reference_images` or `enable_interleave: true`. Style transfer, subject consistency (1–4 images), interleaved text-image output, 2K |
 | **wan2.5-i2i-preview** | **Image editing** — single-image editing with subject consistency, multi-image fusion (up to 3 images), async-only |
 | **wan2.5-t2i-preview** | Preview — free size within constraints |
 | **wan2.2-t2i-flash** | Fast — lower latency |
@@ -88,12 +90,14 @@ Qwen Image text-to-image models (`qwen-image-plus`, `qwen-image-max`) use a diff
 
 1. **User specified a model** → use directly.
 2. **Consult the qwencloud-model-selector skill** when model choice depends on requirement, scenario, or pricing.
-3. **Text-to-image (prompt only, no reference images)** → **always use `wan2.6-t2i`** (default). **NEVER use `wan2.6-image` for pure text-to-image** — it will error without reference images or `enable_interleave: true`.
-4. **Reference images / image editing / interleaved output** → `wan2.6-image` (preferred) or `wan2.5-i2i-preview`.
+3. **Text-to-image (prompt only, no reference images)** → use `wan2.6-t2i` (default) or `wan2.7-image` / `wan2.7-image-pro` (multi-function, higher quality). **NEVER use `wan2.6-image` for pure text-to-image** — it will error without reference images or `enable_interleave: true`.
+4. **Reference images / image editing / interleaved output** → `wan2.7-image-pro` (recommended), `wan2.7-image`, or `wan2.6-image`.
 
 > **⚠️ Important**: The model list above is a **point-in-time snapshot** and may be outdated. Model availability
 > changes frequently. **Always check the [official model list](https://www.qwencloud.com/models)
 > for the authoritative, up-to-date catalog before making model decisions.**
+
+> **Model details**: For more information about a specific model, direct the user to its detail page: `https://www.qwencloud.com/models/<model-name>` (replace `<model-name>` with the exact model ID, e.g. `wan2.7-image-pro` → https://www.qwencloud.com/models/wan2.7-image-pro). NEVER modify or guess the model name in the URL.
 
 ## Execution
 
@@ -135,7 +139,7 @@ python3 <this-skill-dir>/scripts/image.py \
 # Image editing with reference images (wan2.6-image)
 python3 <this-skill-dir>/scripts/image.py \
   --model wan2.6-image \
-  --request '{"prompt":"Apply watercolor painting style to this photo","reference_images":["https://example.com/photo.jpg"],"n":1,"size":"1K"}' \
+  --request '{"prompt":"Apply watercolor painting style to this photo","reference_images":["https://img.alicdn.com/imgextra/i1/NotRealJustExample/photo.jpg"],"n":1,"size":"1K"}' \
   --output output/qwencloud-image-generation/images/out.png \
   --print-response
 ```
@@ -190,6 +194,22 @@ If the script fails, match the error output against the diagnostic table below t
 | `seed` | int | Random seed for reproducibility [0, 2147483647] |
 | `model` | string | `wan2.6-t2i` (default) or other Wan model |
 | `prompt_extend` | bool | Enable prompt rewriting (default: true; image editing mode only) |
+
+### Request Fields (wan2.7-image-pro / wan2.7-image — Multi-function)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `reference_images` | string[] | 0–9 image URLs or local paths |
+| `reference_image` | string | Single image URL/path (shorthand) |
+| `size` | string | `1K`, `2K` (default), or `4K` (pro only, t2i mode). Or pixel dimensions |
+| `enable_sequential` | bool | `true`: sequential multi-image mode (n=1–12). `false` (default): single/batch mode (n=1–4) |
+| `n` | int | Images to generate. Sequential mode: 1–12 (default 12). Non-sequential: 1–4 (default 4). **Billed per image.** |
+| `thinking_mode` | bool | Enable enhanced reasoning for better quality (default: true). Only for t2i (no images, non-sequential) |
+| `bbox_list` | List[List[List[int]]] | Interactive editing regions. Format: `[[[x1,y1,x2,y2],...], ...]`. List length = image count. Empty `[]` for images without edits |
+| `color_palette` | array | Custom color theme (3–10 colors). Each: `{"hex":"#C2D1E6","ratio":"23.51%"}`. Sum of ratios = 100%. Non-sequential mode only |
+| `watermark` | bool | Add "AI Generated" watermark (default: false) |
+
+**Note**: `thinking_mode` increases latency but improves quality. `enable_sequential` generates a coherent image sequence (e.g., same character across scenes).
 
 ### Request Fields (wan2.6-image — Image Editing)
 
@@ -267,6 +287,13 @@ When using generated images as input for another skill (e.g., video-gen i2v, vis
 | 400 | Bad request (invalid prompt, size) | Verify parameters and constraints |
 | 429 | Rate limited | Retry with exponential backoff |
 | 5xx | Server error | Retry with exponential backoff |
+
+> **Usage & billing**: To check actual usage or spending, direct the user to the QwenCloud console:
+> [Usage Analytics](https://home.qwencloud.com/analytics) |
+> [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
+> [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan)
+>
+> **NEVER fabricate, guess, or construct usage/billing/console URLs.** Only provide the exact links listed in this skill. If a URL is not listed here, do not invent one.
 
 ## Output Location
 

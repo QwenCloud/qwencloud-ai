@@ -1,12 +1,12 @@
 # Qwen Image Generation — API Supplementary Guide
 
-> **Content validity**: 2026-03 | **Sources**: [Text-to-Image API](https://docs.qwencloud.com/developer-guides/image-generation/text-to-image) · [Image Generation Guide](https://docs.qwencloud.com/developer-guides/image-generation/text-to-image) · [Wan2.6-Image API](https://docs.qwencloud.com/api-reference/image-generation/wan26-image-gen-edit/create-task)
+> **Content validity**: 2026-04 | **Sources**: [Text-to-Image API](https://docs.qwencloud.com/developer-guides/image-generation/text-to-image) · [Image Generation Guide](https://docs.qwencloud.com/developer-guides/image-generation/text-to-image) · [Wan2.6-Image API](https://docs.qwencloud.com/api-reference/image-generation/wan26-image-gen-edit/create-task)
 
 ---
 
 ## Definition
 
-Generate and edit images using Wan and Qwen-Image models. The Wan series excels at realistic photography and diverse artistic styles. The Qwen-Image series excels at rendering complex Chinese and English text (posters, layouts). **wan2.6-t2i supports synchronous HTTP calls** for text-to-image. **wan2.6-image supports image editing, style transfer, subject consistency, and interleaved text-image output.** Older models use asynchronous invocation (submit task → poll result).
+Generate and edit images using Wan and Qwen-Image models. The Wan series excels at realistic photography and diverse artistic styles. The Qwen-Image series excels at rendering complex Chinese and English text (posters, layouts). **wan2.7-image-pro / wan2.7-image are multi-function models** supporting text-to-image, image editing (0–9 references), sequential multi-image, interactive editing, and thinking mode. **wan2.6-t2i supports synchronous HTTP calls** for text-to-image. **wan2.6-image supports image editing, style transfer, subject consistency, and interleaved text-image output.** Older models use asynchronous invocation (submit task → poll result).
 
 ---
 
@@ -14,14 +14,17 @@ Generate and edit images using Wan and Qwen-Image models. The Wan series excels 
 
 | Scenario | Recommended Model | Notes |
 |----------|------------------|-------|
-| General creative / realistic photography | `wan2.6-t2i` | Latest t2i model, best quality, supports synchronous calls. |
+| General creative / realistic photography | `wan2.7-image-pro` / `wan2.7-image` | Multi-function: t2i + editing, thinking mode, 4K (pro). |
+| General creative (dedicated t2i) | `wan2.6-t2i` | Dedicated t2i model, best quality, supports synchronous calls. |
 | Posters / complex text rendering | `qwen-image-2.0-pro` or `wan2.6-t2i` | Strongest Chinese/English text rendering. |
 | Fast drafts / batch generation | `wan2.2-t2i-flash` | Lowest latency. |
 | Custom resolutions | `qwen-image-2.0` or Wan series | Flexible aspect ratios. |
-| Image editing / style transfer | `wan2.6-image` | 1–4 input images, text prompt to edit/transform. |
+| Image editing / style transfer | `wan2.7-image-pro` / `wan2.7-image` / `wan2.6-image` | wan2.7: 0–9 images, bbox editing, thinking mode. wan2.6: 1–4 images. |
 | Text editing in images / element manipulation | `qwen-image-edit-max` or `qwen-image-2.0-pro` | Precise text modification, element add/delete/replace. |
-| Subject consistency across images | `wan2.6-image` | Maintain subject identity across generated images. |
-| Multi-image composition | `wan2.6-image` | Combine style from one image with background from another. |
+| Subject consistency across images | `wan2.7-image-pro` / `wan2.7-image` / `wan2.6-image` | Maintain subject identity across generated images. |
+| Multi-image composition | `wan2.7-image-pro` / `wan2.7-image` / `wan2.6-image` | Combine style from one image with background from another. |
+| Sequential multi-image (same character/story) | `wan2.7-image-pro` / `wan2.7-image` | Coherent image sequences (1–12 images), same subject across scenes. |
+| Interactive editing (region-based) | `wan2.7-image-pro` / `wan2.7-image` | Use `bbox_list` for precise region editing. |
 | Multi-image fusion with text rendering | `qwen-image-2.0-pro` | 1–3 input images, text rendering, realistic textures. |
 | Interleaved text-image output | `wan2.6-image` | Generate mixed text+image content (tutorials, guides). |
 | Fixed-resolution batch text-to-image | `qwen-image-plus` | 5 fixed resolutions, async API, good for batch workflows. |
@@ -115,7 +118,7 @@ curl -sS 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-ge
     "input": {
         "messages": [{"role": "user", "content": [
             {"text": "Convert this photo to a watercolor painting style"},
-            {"image": "https://example.com/photo.jpg"}
+            {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/photo.jpg"}
         ]}]
     },
     "parameters": {"size": "1K", "n": 1, "prompt_extend": true, "watermark": false, "enable_interleave": false}
@@ -132,8 +135,8 @@ curl -sS 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-ge
     "input": {
         "messages": [{"role": "user", "content": [
             {"text": "Generate a sunset scene based on the style of image 1 and the background of image 2"},
-            {"image": "https://example.com/style_ref.jpg"},
-            {"image": "https://example.com/background_ref.jpg"}
+            {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/style_ref.jpg"},
+            {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/background_ref.jpg"}
         ]}]
     },
     "parameters": {"size": "1K", "n": 1, "prompt_extend": true, "enable_interleave": false}
@@ -204,6 +207,120 @@ In **interleave mode** (`enable_interleave=true`): use pixel dimensions with tot
 
 ---
 
+## wan2.7-image-pro / wan2.7-image — Multi-function Image Generation & Editing
+
+### Overview
+
+The `wan2.7-image-pro` and `wan2.7-image` models are multi-function models that support **both text-to-image and image editing** in a single model. No reference images are required for text-to-image, and up to 9 reference images are supported for editing.
+
+**Key capabilities:**
+- **Text-to-image** (no reference images needed) with optional thinking mode
+- **Sequential multi-image** (`enable_sequential=true`): generate coherent image sequences (1–12 images)
+- **Image editing** with 0–9 reference images
+- **Interactive editing** via `bbox_list` for precise region-based editing
+- **Color palette** customization (3–10 colors)
+
+**wan2.7-image-pro vs wan2.7-image:**
+- `wan2.7-image-pro`: supports 4K resolution for t2i, higher quality. $0.075/image (international)
+- `wan2.7-image`: max 2K resolution, faster. $0.03/image (international)
+
+### Endpoint
+
+Same as wan2.6 series:
+- **Sync**: `POST /api/v1/services/aigc/multimodal-generation/generation`
+
+### Text-to-Image Example (thinking mode)
+
+```bash
+curl -sS 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation' \
+  -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "wan2.7-image-pro",
+    "input": {
+        "messages": [{"role": "user", "content": [{"text": "A cozy flower shop with delicate wooden door and morning sunlight"}]}]
+    },
+    "parameters": {"size": "4K", "n": 1, "thinking_mode": true, "watermark": false}
+  }'
+```
+
+### Sequential Multi-Image Example
+
+```bash
+curl -sS 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation' \
+  -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "wan2.7-image-pro",
+    "input": {
+        "messages": [{"role": "user", "content": [{"text": "A stray orange cat through four seasons: spring cherry blossoms, summer beach, autumn leaves, winter snow"}]}]
+    },
+    "parameters": {"size": "2K", "enable_sequential": true, "n": 4, "watermark": false}
+  }'
+```
+
+### Image Editing Example (multi-reference)
+
+```bash
+curl -sS 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation' \
+  -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "wan2.7-image-pro",
+    "input": {
+        "messages": [{"role": "user", "content": [
+            {"text": "Apply the graffiti pattern from image 2 onto the car body in image 1"},
+            {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/car.jpg"},
+            {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/graffiti.jpg"}
+        ]}]
+    },
+    "parameters": {"size": "2K", "n": 1, "watermark": false}
+  }'
+```
+
+### Interactive Editing Example (bbox)
+
+```bash
+curl -sS 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation' \
+  -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "wan2.7-image-pro",
+    "input": {
+        "messages": [{"role": "user", "content": [
+            {"text": "Place the clock from image 1 at the marked location in image 2"},
+            {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/clock.jpg"},
+            {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/room.jpg"}
+        ]}]
+    },
+    "parameters": {"size": "2K", "n": 1, "bbox_list": [[], [[989,515,1138,681]]], "watermark": false}
+  }'
+```
+
+### Parameters (wan2.7-image-pro / wan2.7-image)
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `size` | `2K` | Resolution: `1K`, `2K` (default), `4K` (pro only, t2i mode). Or pixel dimensions. |
+| `n` | 4 (non-seq) / 12 (seq) | Number of images. Non-sequential: 1–4. Sequential: 1–12. **Billed per image.** |
+| `thinking_mode` | true | Enhanced reasoning for better quality. Only for t2i (no images, non-sequential). Increases latency. |
+| `enable_sequential` | false | Sequential multi-image mode: coherent image sequences (e.g., same character across scenes). |
+| `reference_images` | — | 0–9 image URLs for editing. Not required for t2i. |
+| `bbox_list` | — | Interactive editing regions. Format: `[[[x1,y1,x2,y2],...], ...]`. List length = image count. Empty `[]` for images without edits. |
+| `color_palette` | — | Custom color theme (3–10 colors). Each: `{"hex":"#C2D1E6","ratio":"23.51%"}`. Sum of ratios = 100%. Non-sequential mode only. |
+| `negative_prompt` | — | Content to exclude. Max 500 chars. |
+| `watermark` | false | "AI Generated" watermark. |
+| `seed` | random | Reproducibility seed [0, 2147483647]. |
+
+### Input Image Constraints
+
+- Formats: JPEG, JPG, PNG (no alpha), BMP, WEBP
+- Resolution: 240–8000px per dimension
+- Max file size: 10MB per image
+- Max 9 images per request
+
+---
+
 ## wan2.5-i2i-preview — General Image Editing
 
 ### Overview
@@ -237,7 +354,7 @@ curl -sS 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/image2image/i
     "model": "wan2.5-i2i-preview",
     "input": {
         "prompt": "Change the floral dress to a vintage-style lace long dress",
-        "images": ["https://example.com/photo.jpg"]
+        "images": ["https://img.alicdn.com/imgextra/i3/O1CN0157XGE51l6iL9441yX_!!6000000004770-49-tps-1104-1472.webp"]
     },
     "parameters": {"prompt_extend": true, "n": 1}
   }'
@@ -255,8 +372,8 @@ curl -sS 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/image2image/i
     "input": {
         "prompt": "Place the alarm clock from Image 1 next to the vase on the dining table in Image 2",
         "images": [
-            "https://example.com/clock.jpg",
-            "https://example.com/table.jpg"
+            "https://img.alicdn.com/imgextra/i3/O1CN0157XGE51l6iL9441yX_!!6000000004770-49-tps-1104-1472.webp",
+            "https://img.alicdn.com/imgextra/i3/O1CN01SfG4J41UYn9WNt4X1_!!6000000002530-49-tps-1696-960.webp"
         ]
     },
     "parameters": {"prompt_extend": true, "n": 1}
@@ -310,8 +427,8 @@ curl -sS 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-ge
     "model": "qwen-image-2.0-pro",
     "input": {
         "messages": [{"role": "user", "content": [
-            {"image": "https://example.com/girl.jpg"},
-            {"image": "https://example.com/dress.jpg"},
+            {"image": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250925/thtclx/input1.png"},
+            {"image": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250925/iclsnx/input2.png"},
             {"text": "Make the girl from Image 1 wear the black dress from Image 2"}
         ]}]
     },
@@ -402,8 +519,14 @@ A: **Always use `wan2.6-t2i` for pure text-to-image (prompt only, no reference i
 **Q: How do I get more consistent results?**
 A: Use the `seed` parameter to fix the random seed. Disable `prompt_extend` to prevent the LLM from rewriting and drifting from your intent. Use `negative_prompt` to exclude unwanted elements.
 
+**Q: When should I use wan2.7-image-pro vs wan2.6-t2i for text-to-image?**
+A: `wan2.7-image-pro` is a multi-function model — it supports both t2i and image editing in one model, with thinking mode for higher quality and 4K support. Use it when you want the highest quality or may later need editing. `wan2.6-t2i` is a dedicated t2i model — slightly faster for simple text-to-image tasks since it doesn't carry editing overhead.
+
+**Q: What is sequential multi-image mode?**
+A: Set `enable_sequential=true` with `wan2.7-image-pro` or `wan2.7-image` to generate coherent image sequences (1–12 images) with the same subject across different scenes. Useful for storyboards, character sheets, or seasonal series. Note: thinking_mode is disabled in sequential mode.
+
 **Q: Does the API support image-to-image / reference images?**
-A: Yes, `wan2.6-image` supports image editing with 1–4 reference images, and `qwen-image-edit` series supports 1–3 reference images. Use the `reference_images` field in the script (URLs or local paths; local files are auto-uploaded). For multi-image composition, reference images by order in the prompt: "the style of image 1 and the background of image 2".
+A: Yes. `wan2.7-image-pro` / `wan2.7-image` support 0–9 reference images with advanced features (bbox editing, sequential mode). `wan2.6-image` supports 1–4 reference images for style transfer, subject consistency, and interleaved output. `qwen-image-edit` series supports 1–3 reference images. Use the `reference_images` field in the script (URLs or local paths; local files are auto-uploaded). For multi-image composition, reference images by order in the prompt: "the style of image 1 and the background of image 2".
 
 **Q: How does interleaved text-image output work?**
 A: Set `enable_interleave=true` with `wan2.6-image`. The model generates mixed text and image content. Use async mode (the script auto-enables it). The response contains interleaved text and image items in `output.choices[0].message.content`. The script saves images and a markdown file. Note: `qwen-image-edit` series does **not** support interleaved output.

@@ -69,6 +69,18 @@ All qwencloud/qwencloud-ai scripts require a **standard** key. Coding Plan keys 
 
 If the user's key starts with `sk-sp-`, guide them to obtain a standard key from the console below. See [codingplan.md](references/codingplan.md) for full details.
 
+### Viewing Bills
+
+Billing details are available in the QwenCloud console (not accessible via API — the user must open them in a browser):
+
+| Key Type | Billing Page |
+|----------|--------------|
+| Standard (Pay-as-you-go) | [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
+| Coding Plan | [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan) |
+| Usage analytics (both) | [Usage Analytics](https://home.qwencloud.com/analytics) |
+
+> **NEVER fabricate, guess, or construct usage/billing/console URLs.** Only provide the exact links listed in this skill. If a URL is not listed here, do not invent one.
+
 ## Getting an API Key
 
 1. Open the [QwenCloud Console](https://home.qwencloud.com/api-keys)

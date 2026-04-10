@@ -37,7 +37,7 @@ Pass these inside the `image_url` object:
 {
   "type": "image_url",
   "image_url": {
-    "url": "https://example.com/document.jpg",
+    "url": "https://img.alicdn.com/imgextra/i2/O1CN01ktT8451iQutqReELT_!!6000000004408-0-tps-689-487.jpg",
     "min_pixels": 3072,
     "max_pixels": 8388608
   }
@@ -79,7 +79,7 @@ completion = client.chat.completions.create(
         "role": "user",
         "content": [
             {"type": "image_url", "image_url": {
-                "url": "https://example.com/document.jpg",
+                "url": "https://img.alicdn.com/imgextra/i2/O1CN01ktT8451iQutqReELT_!!6000000004408-0-tps-689-487.jpg",
                 "min_pixels": 3072,
                 "max_pixels": 8388608,
             }},
@@ -104,7 +104,7 @@ completion = client.chat.completions.create(
         "role": "user",
         "content": [
             {"type": "image_url", "image_url": {
-                "url": "https://example.com/ticket.jpg",
+                "url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/ticket.jpg",
                 "min_pixels": 3072,
                 "max_pixels": 8388608,
             }},
@@ -126,7 +126,7 @@ curl -X POST https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/complet
     "messages": [{
       "role": "user",
       "content": [
-        {"type": "image_url", "image_url": {"url": "https://example.com/doc.jpg", "min_pixels": 3072, "max_pixels": 8388608}},
+        {"type": "image_url", "image_url": {"url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/doc.jpg", "min_pixels": 3072, "max_pixels": 8388608}},
         {"type": "text", "text": "Extract all text from this image."}
       ]
     }]

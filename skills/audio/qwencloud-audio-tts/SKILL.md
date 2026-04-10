@@ -65,6 +65,8 @@ Scripts require a **standard QwenCloud API key** (`sk-...`). Coding Plan keys (`
 > changes frequently. **Always check the [official model list](https://www.qwencloud.com/models)
 > for the authoritative, up-to-date catalog before making model decisions.**
 
+> **Model details**: For more information about a specific model, direct the user to its detail page: `https://www.qwencloud.com/models/<model-name>` (replace `<model-name>` with the exact model ID, e.g. `qwen3-tts-flash` → https://www.qwencloud.com/models/qwen3-tts-flash). NEVER modify or guess the model name in the URL.
+
 ## Available Voices
 
 | Voice | Description | Script |
@@ -201,6 +203,13 @@ When passing generated audio to another skill (e.g., video-gen audio overlay):
 | `401 Unauthorized` | Invalid or missing API key | Run **qwencloud-ops-auth** if available; else prompt user to set key (non-plaintext check only) |
 | `400` | Invalid parameters (missing text/voice) | Validate request body |
 | `429` / `5xx` | Rate limit or server error | Retry with backoff |
+
+> **Usage & billing**: To check actual usage or spending, direct the user to the QwenCloud console:
+> [Usage Analytics](https://home.qwencloud.com/analytics) |
+> [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
+> [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan)
+>
+> **NEVER fabricate, guess, or construct usage/billing/console URLs.** Only provide the exact links listed in this skill. If a URL is not listed here, do not invent one.
 
 ## Output Location
 

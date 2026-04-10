@@ -1,6 +1,6 @@
 # Visual Reasoning Guide
 
-> **Content validity**: 2026-03 | **Source**: [Visual Reasoning](https://docs.qwencloud.com/developer-guides/text-generation/thinking)
+> **Content validity**: 2026-04 | **Source**: [Visual Reasoning](https://docs.qwencloud.com/developer-guides/text-generation/thinking)
 
 ---
 
@@ -29,6 +29,7 @@ Visual reasoning models output their thinking process before the final answer. S
 |-------|---------|-------|
 | `qwen3-vl-plus` | thinking **off** | Set `enable_thinking: true` to activate |
 | `qwen3-vl-flash` | thinking **off** | Set `enable_thinking: true` to activate |
+| `qwen3.6-plus` | thinking **on** | Latest flagship. Set `enable_thinking: false` to disable |
 | `qwen3.5-plus` | thinking **on** | Set `enable_thinking: false` to disable |
 | `qwen3.5-flash` | thinking **on** | Set `enable_thinking: false` to disable |
 
@@ -72,7 +73,7 @@ completion = client.chat.completions.create(
     messages=[{
         "role": "user",
         "content": [
-            {"type": "image_url", "image_url": {"url": "https://example.com/math-problem.jpg"}},
+            {"type": "image_url", "image_url": {"url": "https://img.alicdn.com/imgextra/i1/O1CN01gDEY8M1W114Hi3XcN_!!6000000002727-0-tps-1024-406.jpg"}},
             {"type": "text", "text": "How do I solve this problem?"},
         ],
     }],
@@ -111,7 +112,7 @@ completion = client.chat.completions.create(
     messages=[{
         "role": "user",
         "content": [
-            {"type": "image_url", "image_url": {"url": "https://example.com/chart.png"}},
+            {"type": "image_url", "image_url": {"url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/chart.png"}},
             {"type": "text", "text": "Analyze the trends in this chart."},
         ],
     }],
@@ -130,7 +131,7 @@ completion = client.chat.completions.create(
     messages=[{
         "role": "user",
         "content": [
-            {"type": "video_url", "video_url": {"url": "https://example.com/clip.mp4"}, "fps": 2},
+            {"type": "video_url", "video_url": {"url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/clip.mp4"}, "fps": 2},
             {"type": "text", "text": "Analyze what happens in this video step by step."},
         ],
     }],
@@ -159,7 +160,7 @@ python scripts/reason.py --request '{"prompt":"Describe the action",
 1. **QVQ models require streaming.** Non-streaming calls return an error. The skill script auto-enables streaming for QVQ.
 2. **Thinking tokens are billed as output tokens.** This increases cost. Use `thinking_budget` to limit reasoning depth.
 3. **System prompt**: In general (non-agent) scenarios, do not set a System Message for optimal performance. Pass instructions via User Message. For multi-turn agents, use the system message.
-4. **Qwen3.5-plus thinking is on by default.** Disable with `enable_thinking: false` for simple tasks where speed matters.
+4. **Qwen3.6-plus/Qwen3.5-plus thinking is on by default.** Disable with `enable_thinking: false` for simple tasks where speed matters.
 5. **Structured output only in non-thinking mode.** JSON Schema and structured output are only supported when thinking is disabled.
 6. **analyze.py also supports thinking.** Set `enable_thinking: true` in the request — the script auto-enables streaming. Use reason.py only for QVQ or dedicated reasoning workflows.
 7. **Video reasoning supported.** Both `reason.py` and `analyze.py` accept `video` (URL) and `video_frames` (frame list) input with optional `fps` parameter. Video audio is not processed — models analyze frames only.

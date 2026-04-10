@@ -64,7 +64,7 @@ curl -sS '...' -d '{
     "model": "wan2.6-t2v",
     "input": {
         "prompt": "A musician playing guitar on a moonlit beach",
-        "audio_url": "https://example.com/bgm.mp3"
+        "audio_url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/bgm.mp3"
     },
     "parameters": {"size": "1280*720", "duration": 10}
 }

@@ -25,3 +25,8 @@
 ## Pricing
 
 - **Model Pricing**: https://docs.qwencloud.com/developer-guides/getting-started/pricing
+
+## Models
+
+- **Model list**: https://www.qwencloud.com/models
+- **Model detail page**: `https://www.qwencloud.com/models/<model-name>` (e.g. https://www.qwencloud.com/models/wan2.7-t2v)

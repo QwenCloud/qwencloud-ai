@@ -8,7 +8,7 @@
 
 ## Text Generation (per 1M tokens)
 
-**Commercial models**: qwen3-max, qwen3.5-plus, qwen3.5-flash, qwen-turbo, qwq-plus, qwen3-coder-next, qwen3-coder-plus, qwen3-coder-flash, qwen-plus-character, qwen-plus-character-ja, qwen-flash-character
+**Commercial models**: qwen3.6-plus, qwen3-max, qwen3.5-plus, qwen3.5-flash, qwen-turbo, qwq-plus, qwen3-coder-next, qwen3-coder-plus, qwen3-coder-flash, qwen-plus-character, qwen-plus-character-ja, qwen-flash-character
 
 **Open-source models**: qwen3.5-397b-a17b, qwen3.5-122b-a10b, qwen3.5-27b, qwen3.5-35b-a3b, qwen3-235b-a22b, qwen3-32b, qwen3-30b-a3b, qwen3-8b, qwen3-4b
 
@@ -16,11 +16,11 @@
 - Some models have **tiered pricing** based on input context length (e.g. ≤32K, ≤128K, ≤256K, ≤1M)
 - Thinking mode output may be priced differently from non-thinking output
 - **Batch API**: 50% off for supported models
-- Some models may offer a limited free quota — verify in your [QwenCloud console](https://home.qwencloud.com/free-quota)
+- Some models may offer a limited free quota — **do not assume the user has remaining free quota**; verify in the QwenCloud console
 
 ## Vision Understanding (per 1M tokens)
 
-**Models**: qwen3-vl-plus, qwen3-vl-flash, qwen-vl-ocr, qvq-max
+**Models**: qwen3.6-plus (multimodal), qwen3-vl-plus, qwen3-vl-flash, qwen-vl-ocr, qvq-max
 
 - Billing unit: **per 1M tokens**
 - Tiered pricing by input context length for some models
@@ -34,7 +34,7 @@
 
 ## Image Generation (per image)
 
-**Wan series**: wan2.6-t2i, wan2.5-t2i-preview, wan2.2-t2i-flash, wan2.2-t2i-plus, wan2.5-i2i-preview, wan2.6-image
+**Wan series**: wan2.7-image-pro, wan2.7-image, wan2.6-t2i, wan2.5-t2i-preview, wan2.2-t2i-flash, wan2.2-t2i-plus, wan2.5-i2i-preview, wan2.6-image
 
 **Qwen Image series**: qwen-image-2.0-pro, qwen-image-2.0, qwen-image-edit-max, qwen-image-edit-plus, qwen-image-edit, qwen-image-plus, qwen-image-max
 
@@ -45,7 +45,7 @@
 
 ## Video Generation (per second)
 
-**Models**: wan2.6-t2v, wan2.6-i2v-flash, wan2.6-i2v, wan2.6-r2v-flash, wan2.6-r2v, wan2.5-t2v-preview, wan2.5-i2v-preview, wan2.2-t2v-plus, wan2.2-i2v-flash, wan2.2-i2v-plus, wan2.2-kf2v-flash, wan2.1-vace-plus
+**Models**: wan2.7-t2v, wan2.7-i2v, wan2.6-t2v, wan2.6-i2v-flash, wan2.6-i2v, wan2.6-r2v-flash, wan2.6-r2v, wan2.5-t2v-preview, wan2.5-i2v-preview, wan2.2-t2v-plus, wan2.2-i2v-flash, wan2.2-i2v-plus, wan2.2-kf2v-flash, wan2.1-vace-plus
 
 - Billing unit: **per second of generated video**
 - Price varies by resolution (480P / 720P / 1080P)
@@ -90,8 +90,10 @@
 ## Notes
 
 - **API Key must be created from the** [QwenCloud Console](https://home.qwencloud.com/api-keys).
-- **Free quota**: Some models include a limited free quota after activating QwenCloud. **However**: free quota amounts, eligibility, and validity periods are subject to change without notice. Quotas may have already been consumed or expired. **Never assume the user has remaining free quota** — always present the paid unit price as the primary reference and mention free quota only as a possibility that the user should verify in their [QwenCloud console](https://home.qwencloud.com/free-quota).
+- **Free quota**: Some models include a limited free quota after activating QwenCloud. **However**: free quota amounts, eligibility, and validity periods are subject to change without notice. Quotas may have already been consumed or expired. **Never assume the user has remaining free quota** — always present the paid unit price as the primary reference and mention free quota only as a possibility that the user should verify in their QwenCloud console.
 - **Batch calling**: Supported models get 50% off (both input and output).
 - **Context cache**: Eligible models get input token discounts.
 - **Tiered pricing**: Some models have higher per-token cost as input length increases.
 - **For the latest prices**: Always check the [official pricing page](https://docs.qwencloud.com/developer-guides/getting-started/pricing).
+- **View actual usage and bills**: [Usage Analytics](https://home.qwencloud.com/analytics) | [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) | [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan).
+- **Model detail page**: For more information about a specific model, visit `https://www.qwencloud.com/models/<model-name>` (e.g. https://www.qwencloud.com/models/qwen3.6-plus).

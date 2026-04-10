@@ -44,7 +44,8 @@ Scripts require a **standard QwenCloud API key** (`sk-...`). Coding Plan keys (`
 
 | Model | Use Case |
 |-------|----------|
-| **qwen3.5-plus** | **Preferred** — unified multimodal (text+image+video). Thinking on by default. |
+| **qwen3.6-plus** | **Preferred** — latest flagship, unified multimodal (text+image+video). Thinking on by default. Best balance of quality, speed, cost. |
+| **qwen3.5-plus** | Unified multimodal (text+image+video). Thinking on by default. |
 | **qwen3.5-flash** | Fast multimodal — cheaper, faster. Thinking on by default. |
 | **qwen3-vl-plus** | High-precision — object localization (2D/3D), document/webpage parsing. |
 | **qwen3-vl-flash** | Fast vision — lower latency, 33 languages. |
@@ -55,11 +56,13 @@ Scripts require a **standard QwenCloud API key** (`sk-...`). Coding Plan keys (`
 
 1. **User specified a model** → use directly.
 2. **Consult the qwencloud-model-selector skill** when model choice depends on requirement, scenario, or pricing.
-3. **No signal, clear task** → `qwen3.5-plus`. Use `qwen3-vl-plus` for precise localization or 3D detection.
+3. **No signal, clear task** → `qwen3.6-plus`. Use `qwen3-vl-plus` for precise localization or 3D detection.
 
 > **⚠️ Important**: The model list above is a **point-in-time snapshot** and may be outdated. Model availability
 > changes frequently. **Always check the [official model list](https://www.qwencloud.com/models)
 > for the authoritative, up-to-date catalog before making model decisions.**
+
+> **Model details**: For more information about a specific model, direct the user to its detail page: `https://www.qwencloud.com/models/<model-name>` (replace `<model-name>` with the exact model ID, e.g. `qwen3.6-plus` → https://www.qwencloud.com/models/qwen3.6-plus). NEVER modify or guess the model name in the URL.
 
 ## Execution
 
@@ -93,7 +96,7 @@ If `python3` is not found, try `python --version` or `py -3 --version`. If Pytho
 
 | Script | Purpose | Default Model |
 |--------|---------|---------------|
-| `scripts/analyze.py` | Image understanding, multi-image, video, thinking mode, high-res | `qwen3.5-plus` |
+| `scripts/analyze.py` | Image understanding, multi-image, video, thinking mode, high-res | `qwen3.6-plus` |
 | `scripts/reason.py` | Visual reasoning with chain-of-thought, video reasoning (always streaming) | `qvq-max` |
 | `scripts/ocr.py` | OCR text extraction from documents, receipts, tables | `qwen-vl-ocr` |
 
@@ -111,7 +114,7 @@ If `python3` is not found, try `python --version` or `py -3 --version`. If Pytho
 ```bash
 # Image analysis
 python3 <this-skill-dir>/scripts/analyze.py \
-  --request '{"prompt":"What is in this image?","image":"https://example.com/photo.jpg"}' \
+  --request '{"prompt":"What is in this image?","image":"https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20241022/emyrja/dog_and_girl.jpeg"}' \
   --output output/qwencloud-vision/result.json --print-response
 
 # Video analysis (local file — add --upload-files for files >= 7 MB)
@@ -189,6 +192,7 @@ When the input file comes from another skill's output (e.g., image-gen, video-ge
 
 | Model | Thinking Default | Notes |
 |-------|-----------------|-------|
+| `qwen3.6-plus` | **On** | Latest flagship. Disable with `enable_thinking: false` for simple tasks. |
 | `qwen3.5-plus` / `qwen3.5-flash` | **On** | Disable with `enable_thinking: false` for simple tasks. |
 | `qwen3-vl-plus` / `qwen3-vl-flash` | Off | Enable with `enable_thinking: true`. |
 | `qvq-max` | Always on | **Streaming output required.** |
@@ -213,6 +217,13 @@ Optimized for text extraction. Supports multi-language, skewed images, tables, f
 | 400 | Bad request (invalid format) | Verify messages format and image URL/format |
 | 429 | Rate limited | Retry with exponential backoff |
 | 5xx | Server error | Retry with exponential backoff |
+
+> **Usage & billing**: To check actual usage or spending, direct the user to the QwenCloud console:
+> [Usage Analytics](https://home.qwencloud.com/analytics) |
+> [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
+> [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan)
+>
+> **NEVER fabricate, guess, or construct usage/billing/console URLs.** Only provide the exact links listed in this skill. If a URL is not listed here, do not invent one.
 
 ## Output Location
 

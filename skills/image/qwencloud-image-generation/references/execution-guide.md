@@ -98,6 +98,77 @@ curl -o image.png "IMAGE_URL_FROM_POLL_RESPONSE"
 |--------|----------|
 | Singapore (default) | `https://dashscope-intl.aliyuncs.com/api/v1` |
 
+### wan2.7-image-pro: Text-to-image with thinking mode (sync)
+
+**Step 1 — Generate image:**
+
+```bash
+curl -sS -X POST "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation" \
+  -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "wan2.7-image-pro",
+    "input": {
+      "messages": [{"role": "user", "content": [{"text": "A cozy flower shop with delicate wooden door and morning sunlight"}]}]
+    },
+    "parameters": {
+      "size": "4K",
+      "n": 1,
+      "thinking_mode": true,
+      "watermark": false
+    }
+  }'
+```
+
+**Step 2 — Extract image URL** from `output.choices[0].message.content[0].image`, then download.
+
+### wan2.7-image-pro: Sequential multi-image (sync)
+
+```bash
+curl -sS -X POST "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation" \
+  -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "wan2.7-image-pro",
+    "input": {
+      "messages": [{"role": "user", "content": [{"text": "A stray orange cat through four seasons"}]}]
+    },
+    "parameters": {
+      "size": "2K",
+      "enable_sequential": true,
+      "n": 4,
+      "watermark": false
+    }
+  }'
+```
+
+Multiple images returned in `output.choices[0].message.content[].image`.
+
+### wan2.7-image-pro: Image editing with references (sync)
+
+```bash
+curl -sS -X POST "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation" \
+  -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "wan2.7-image-pro",
+    "input": {
+      "messages": [{"role": "user", "content": [
+        {"text": "Apply the graffiti from image 2 onto the car in image 1"},
+        {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/car.jpg"},
+        {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/graffiti.jpg"}
+      ]}]
+    },
+    "parameters": {
+      "size": "2K",
+      "n": 1,
+      "watermark": false
+    }
+  }'
+```
+
+Extract image URL from `output.choices[0].message.content[0].image`, then download.
+
 ### wan2.6-image: Image editing (sync)
 
 **Step 1 — Generate edited image:**
@@ -111,7 +182,7 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multi
     "input": {
       "messages": [{"role": "user", "content": [
         {"text": "Apply watercolor painting style to this photo"},
-        {"image": "https://example.com/photo.jpg"}
+        {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/photo.jpg"}
       ]}]
     },
     "parameters": {
@@ -153,8 +224,8 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multi
     "input": {
       "messages": [{"role": "user", "content": [
         {"text": "Generate a sunset scene based on the style of image 1 and the background of image 2"},
-        {"image": "https://example.com/style.jpg"},
-        {"image": "https://example.com/background.jpg"}
+        {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/style.jpg"},
+        {"image": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/background.jpg"}
       ]}]
     },
     "parameters": {"size": "1K", "n": 1, "prompt_extend": true, "enable_interleave": false}
@@ -214,7 +285,7 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/image
     "model": "wan2.5-i2i-preview",
     "input": {
       "prompt": "Change the dress to a vintage lace long dress with embroidery details",
-      "images": ["https://example.com/photo.jpg"]
+      "images": ["https://img.alicdn.com/imgextra/i3/O1CN0157XGE51l6iL9441yX_!!6000000004770-49-tps-1104-1472.webp"]
     },
     "parameters": {"prompt_extend": true, "n": 1}
   }'
@@ -249,8 +320,8 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/image
     "input": {
       "prompt": "Place the alarm clock from Image 1 next to the vase on the table in Image 2",
       "images": [
-        "https://example.com/clock.jpg",
-        "https://example.com/table.jpg"
+        "https://img.alicdn.com/imgextra/i3/O1CN0157XGE51l6iL9441yX_!!6000000004770-49-tps-1104-1472.webp",
+        "https://img.alicdn.com/imgextra/i3/O1CN01SfG4J41UYn9WNt4X1_!!6000000002530-49-tps-1696-960.webp"
       ]
     },
     "parameters": {"prompt_extend": true, "n": 1}
@@ -271,8 +342,8 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multi
     "model": "qwen-image-2.0-pro",
     "input": {
       "messages": [{"role": "user", "content": [
-        {"image": "https://example.com/girl.jpg"},
-        {"image": "https://example.com/dress.jpg"},
+        {"image": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250925/thtclx/input1.png"},
+        {"image": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250925/iclsnx/input2.png"},
         {"text": "Make the girl from Image 1 wear the black dress from Image 2"}
       ]}]
     },

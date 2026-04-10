@@ -24,11 +24,11 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/co
   -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "qwen3.5-plus",
+    "model": "qwen3.6-plus",
     "messages": [{
       "role": "user",
       "content": [
-        {"type": "image_url", "image_url": {"url": "https://example.com/photo.jpg", "detail": "auto"}},
+        {"type": "image_url", "image_url": {"url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20241022/emyrja/dog_and_girl.jpeg", "detail": "auto"}},
         {"type": "text", "text": "Describe this image in detail."}
       ]
     }],

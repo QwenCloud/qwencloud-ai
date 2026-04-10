@@ -17,3 +17,4 @@
 ## Models
 
 - **Model list**: https://www.qwencloud.com/models
+- **Model detail page**: `https://www.qwencloud.com/models/<model-name>` (e.g. https://www.qwencloud.com/models/qwen3.6-plus)

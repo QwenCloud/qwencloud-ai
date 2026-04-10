@@ -39,8 +39,11 @@ from qwencloud_lib import (  # noqa: E402
 from video_lib import (  # noqa: E402
     DEFAULT_MODELS,
     ENDPOINTS,
+    MODE_I2V,
+    MODE_KF2V,
     PAYLOAD_BUILDERS,
     RESOLVE_KEYS,
+    _WAN27_I2V_MODELS,
     detect_mode,
     resolve_request_urls,
     extract_video_url,
@@ -95,53 +98,69 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""\
 mode auto-detection (from request JSON fields):
-  t2v    prompt only → text-to-video (default: wan2.6-t2v)
-  i2v    img_url or reference_image → image-to-video (default: wan2.6-i2v-flash)
-  kf2v   first_frame_url → keyframe-to-video (default: wan2.2-kf2v-flash)
-  r2v    reference_urls → reference role-play (default: wan2.6-r2v-flash)
-  vace   function → video editing/repaint/extend (default: wan2.1-vace-plus)
+  t2v   prompt only → text-to-video (default: wan2.6-t2v, or wan2.7-t2v)
+  i2v   img_url/media/first_frame_url → image-to-video (default: wan2.6-i2v-flash, or wan2.7-i2v)
+  kf2v  first_frame_url (without media) → keyframe-to-video (default: wan2.2-kf2v-flash)
+  r2v   reference_urls → reference role-play (default: wan2.6-r2v-flash)
+  vace  function → video editing/repaint/extend (default: wan2.1-vace-plus)
+
+model version differences (handled automatically):
+  wan2.6-t2v: uses "size" param (e.g. "1280*720"), supports seed, shot_type
+  wan2.7-t2v: uses "resolution" + "ratio" params, auto-dubbing, 5000 char prompt
+  wan2.6-i2v: single img_url input
+  wan2.7-i2v: media array (first_frame, last_frame, driving_audio, first_clip)
 
 request JSON fields (--request / --file):
   prompt            Text description (required for t2v/i2v/r2v, optional for vace)
-  duration          Video length in seconds (default: 5)
-  size              Resolution for t2v/r2v, e.g. "1280*720" (default: "1280*720")
-  resolution        Resolution for i2v/kf2v, e.g. "720P", "1080P" (default: "720P")
-  img_url           First-frame image URL/path (i2v mode)
-  reference_image   Alternative to img_url (i2v mode)
-  first_frame_url   First frame (kf2v mode, required)
-  last_frame_url    Last frame (kf2v mode, optional)
-  reference_urls    Array of character reference image/video URLs (r2v mode)
-  function          VACE function: repainting, editing, extension, outpainting
-  video_url         Source video for VACE editing
-  audio_url         Audio track to include (t2v/i2v modes)
+  duration          Video length in seconds (default: 5, wan2.7: 2-15)
+  size              Resolution for wan2.6 t2v/r2v, e.g. "1280*720"
+  resolution        Resolution for wan2.7/i2v/kf2v, e.g. "720P", "1080P"
+  ratio             Aspect ratio for wan2.7-t2v, e.g. "16:9", "9:16"
+  img_url           First-frame image (i2v wan2.6)
+  first_frame_url   First frame (wan2.7-i2v/kf2v)
+  last_frame_url    Last frame (wan2.7-i2v/kf2v)
+  first_clip_url    Video to continue (wan2.7-i2v)
+  driving_audio_url Audio for lip-sync (wan2.7-i2v)
+  media             Array of {type, url} for wan2.7-i2v
+  reference_urls    Character reference URLs (r2v)
+  function          VACE: repainting, editing, extension, outpainting
+  video_url         Source video (VACE)
+  audio_url         Audio track (t2v/i2v)
   negative_prompt   What to avoid
-  seed              Reproducibility seed
-  prompt_extend     true/false — auto-enhance prompt (default: true)
-  watermark         true/false (default: false)
-  shot_type         Camera movement style
+  seed              Reproducibility (wan2.6 only)
+  prompt_extend     Auto-enhance prompt (default: true)
+  watermark         Add watermark (default: false)
 
 local files:
-  Local paths in img_url, reference_image, reference_urls, audio_url, etc.
-  are auto-uploaded to DashScope temp storage (oss://, 48h TTL).
+  Local paths are auto-uploaded to DashScope temp storage (48h TTL).
 
 environment variables:
   DASHSCOPE_API_KEY  (required) API key — also loaded from .env
-  QWEN_API_KEY       (alternative) Alias for DASHSCOPE_API_KEY
+  QWEN_API_KEY       (alternative)
   QWEN_REGION        ap-southeast-1 (default)
 
 examples:
-  # Text-to-video
+  # Text-to-video (wan2.6)
   python scripts/video.py --request '{"prompt":"A cat playing piano","duration":5}'
 
-  # Image-to-video
+  # Text-to-video with wan2.7 (ratio, auto-dubbing)
+  python scripts/video.py --request '{"prompt":"Multi-shot cinematic...",
+    "resolution":"1080P","ratio":"16:9","duration":15}' --model wan2.7-t2v
+
+  # Image-to-video (wan2.6)
   python scripts/video.py --request '{"prompt":"Animate this","img_url":"photo.jpg"}'
 
-  # Submit only (get task_id), then resume later
-  python scripts/video.py --request '{"prompt":"A sunset"}' --submit-only
-  python scripts/video.py --task-id <TASK_ID> --output output/
+  # Image-to-video with wan2.7 (first frame + audio sync)
+  python scripts/video.py --request '{"prompt":"A rapper sings","first_frame_url":"rapper.png",
+    "driving_audio_url":"rap.mp3"}' --model wan2.7-i2v
 
-  # Single status check (non-blocking)
-  python scripts/video.py --task-id <TASK_ID> --poll-once
+  # Video continuation with wan2.7
+  python scripts/video.py --request '{"prompt":"Dog continues skateboarding",
+    "first_clip_url":"dog_skateboard.mp4"}' --model wan2.7-i2v
+
+  # Submit only, then resume later
+  python scripts/video.py --request '{"prompt":"A sunset"}' --submit-only
+  python scripts/video.py --task-id <TASK_ID>
 
   # VACE video editing
   python scripts/video.py --request '{"function":"repainting",
@@ -214,6 +233,9 @@ examples:
 
     mode = args.mode or detect_mode(request)
     model = args.model or request.get("model") or DEFAULT_MODELS[mode]
+    # Model-aware correction: wan2.7-i2v uses first_frame_url but needs i2v endpoint
+    if model in _WAN27_I2V_MODELS and mode == MODE_KF2V:
+        mode = MODE_I2V
     duration = request.get("duration", 5)
     resolution = resolve_resolution(request, mode)
     cost_str = estimate_cost(model, duration, resolution)

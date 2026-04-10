@@ -51,8 +51,8 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/image
     "model": "wan2.2-kf2v-flash",
     "input": {
       "prompt": "A cat looks up to the sky",
-      "first_frame_url": "https://example.com/first.png",
-      "last_frame_url": "https://example.com/last.png"
+      "first_frame_url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/first.png",
+      "last_frame_url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/last.png"
     },
     "parameters": {
       "resolution": "720P"
@@ -64,17 +64,17 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/image
 
 i2v:
 ```json
-{"model":"wan2.6-i2v-flash","input":{"prompt":"A cat running on grass","img_url":"https://example.com/frame.png"},"parameters":{"resolution":"720P","duration":5}}
+{"model":"wan2.6-i2v-flash","input":{"prompt":"A cat running on grass","img_url":"https://img.alicdn.com/imgextra/i1/NotRealJustExample/frame.png"},"parameters":{"resolution":"720P","duration":5}}
 ```
 
 r2v:
 ```json
-{"model":"wan2.6-r2v-flash","input":{"prompt":"character1 greets character2","reference_urls":["https://example.com/person1.png","https://example.com/person2.png"]},"parameters":{"size":"1280*720","duration":5,"shot_type":"multi"}}
+{"model":"wan2.6-r2v-flash","input":{"prompt":"character1 greets character2","reference_urls":["https://img.alicdn.com/imgextra/i1/NotRealJustExample/person1.png","https://img.alicdn.com/imgextra/i1/NotRealJustExample/person2.png"]},"parameters":{"size":"1280*720","duration":5,"shot_type":"multi"}}
 ```
 
 vace (image_reference):
 ```json
-{"model":"wan2.1-vace-plus","input":{"function":"image_reference","prompt":"A girl walks through a forest","ref_images_url":["https://example.com/girl.png","https://example.com/forest.png"],"obj_or_bg":["obj","bg"]},"parameters":{"size":"1280*720"}}
+{"model":"wan2.1-vace-plus","input":{"function":"image_reference","prompt":"A girl walks through a forest","ref_images_url":["https://img.alicdn.com/imgextra/i1/NotRealJustExample/girl.png","https://img.alicdn.com/imgextra/i1/NotRealJustExample/forest.png"],"obj_or_bg":["obj","bg"]},"parameters":{"size":"1280*720"}}
 ```
 
 ### Step 2 — Poll until done (repeat every 10–15s)

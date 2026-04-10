@@ -32,6 +32,10 @@ DEFAULT_MODELS: dict[str, str] = {
     MODE_VACE: "wan2.1-vace-plus",
 }
 
+# wan2.7 models use the same modes but with different payload structure
+_WAN27_T2V_MODELS = frozenset({"wan2.7-t2v"})
+_WAN27_I2V_MODELS = frozenset({"wan2.7-i2v"})
+
 ENDPOINTS: dict[str, str] = {
     MODE_T2V: "/services/aigc/video-generation/video-synthesis",
     MODE_I2V: "/services/aigc/video-generation/video-synthesis",
@@ -52,6 +56,9 @@ def detect_mode(request: dict[str, Any]) -> str:
         return MODE_VACE
     if request.get("reference_urls"):
         return MODE_R2V
+    # wan2.7-i2v uses media array or first_clip_url
+    if request.get("media") or request.get("first_clip_url"):
+        return MODE_I2V
     if request.get("first_frame_url"):
         return MODE_KF2V
     if request.get("img_url") or request.get("reference_image"):
@@ -64,7 +71,8 @@ def detect_mode(request: dict[str, Any]) -> str:
 
 RESOLVE_KEYS: dict[str, list[str]] = {
     MODE_T2V: ["audio_url"],
-    MODE_I2V: ["img_url", "reference_image", "audio_url"],
+    MODE_I2V: ["img_url", "reference_image", "audio_url",
+               "first_frame_url", "last_frame_url", "driving_audio_url", "first_clip_url"],
     MODE_KF2V: ["first_frame_url", "last_frame_url"],
     MODE_R2V: ["reference_urls"],
     MODE_VACE: ["video_url", "mask_image_url", "mask_video_url",
@@ -90,18 +98,31 @@ def resolve_request_urls(request: dict[str, Any], api_key: str, model: str,
 # ---------------------------------------------------------------------------
 
 def build_t2v_payload(request: dict[str, Any], model: str) -> dict[str, Any]:
-    """Build payload for text-to-video generation."""
+    """Build payload for text-to-video generation (wan2.6/wan2.7)."""
+    is_v27 = model in _WAN27_T2V_MODELS
+
     input_obj: dict[str, Any] = {"prompt": request.get("prompt", "")}
     if request.get("negative_prompt"):
         input_obj["negative_prompt"] = request["negative_prompt"]
     if request.get("audio_url"):
         input_obj["audio_url"] = request["audio_url"]
 
-    params: dict[str, Any] = {}
-    if request.get("size"):
-        params["size"] = request["size"]
-    params["duration"] = request.get("duration", 5)
-    for key in ("prompt_extend", "watermark", "seed", "shot_type"):
+    params: dict[str, Any] = {"duration": request.get("duration", 5)}
+
+    if is_v27:
+        # wan2.7-t2v: uses resolution and ratio
+        params["resolution"] = request.get("resolution", "1080P")
+        if request.get("ratio"):
+            params["ratio"] = request["ratio"]
+    else:
+        # wan2.6-t2v: uses size
+        if request.get("size"):
+            params["size"] = request["size"]
+        for key in ("seed", "shot_type"):
+            if request.get(key) is not None:
+                params[key] = request[key]
+
+    for key in ("prompt_extend", "watermark"):
         if request.get(key) is not None:
             params[key] = request[key]
 
@@ -109,7 +130,14 @@ def build_t2v_payload(request: dict[str, Any], model: str) -> dict[str, Any]:
 
 
 def build_i2v_payload(request: dict[str, Any], model: str) -> dict[str, Any]:
-    """Build payload for image-to-video generation."""
+    """Build payload for image-to-video generation (wan2.6/wan2.7)."""
+    is_v27 = model in _WAN27_I2V_MODELS
+
+    # wan2.7-i2v uses media array
+    if is_v27 or request.get("media") or request.get("first_clip_url"):
+        return _build_i2v_v27_payload(request, model)
+
+    # wan2.6-i2v uses img_url
     img_url = request.get("img_url") or request.get("reference_image", "")
     input_obj: dict[str, Any] = {"prompt": request.get("prompt", ""), "img_url": img_url}
     if request.get("negative_prompt"):
@@ -122,6 +150,48 @@ def build_i2v_payload(request: dict[str, Any], model: str) -> dict[str, Any]:
         "duration": request.get("duration", 5),
     }
     for key in ("prompt_extend", "watermark", "seed", "shot_type", "template", "audio"):
+        if request.get(key) is not None:
+            params[key] = request[key]
+
+    return {"model": model, "input": input_obj, "parameters": params}
+
+
+def _build_i2v_v27_payload(request: dict[str, Any], model: str) -> dict[str, Any]:
+    """Build payload for wan2.7-i2v unified image-to-video generation.
+
+    Supports: first_frame, last_frame, driving_audio, first_clip (video continuation).
+    """
+    media: list[dict[str, str]] = []
+
+    if request.get("media"):
+        media = request["media"]
+    else:
+        if request.get("first_frame_url"):
+            media.append({"type": "first_frame", "url": request["first_frame_url"]})
+        if request.get("last_frame_url"):
+            media.append({"type": "last_frame", "url": request["last_frame_url"]})
+        if request.get("driving_audio_url"):
+            media.append({"type": "driving_audio", "url": request["driving_audio_url"]})
+        if request.get("first_clip_url"):
+            media.append({"type": "first_clip", "url": request["first_clip_url"]})
+
+    if not media:
+        raise ValueError(
+            "wan2.7-i2v requires at least one media asset. "
+            "Use first_frame_url, first_clip_url, or media array."
+        )
+
+    input_obj: dict[str, Any] = {"media": media}
+    if request.get("prompt"):
+        input_obj["prompt"] = request["prompt"]
+    if request.get("negative_prompt"):
+        input_obj["negative_prompt"] = request["negative_prompt"]
+
+    params: dict[str, Any] = {
+        "resolution": request.get("resolution", "1080P"),
+        "duration": request.get("duration", 5),
+    }
+    for key in ("prompt_extend", "watermark"):
         if request.get(key) is not None:
             params[key] = request[key]
 
@@ -234,9 +304,14 @@ def estimate_cost(_model: str, _duration: int, _resolution: str,
 
 def resolve_resolution(request: dict[str, Any], mode: str) -> str:
     """Derive a human-readable resolution label from the request for cost estimation."""
+    # Modes that use resolution parameter
     if mode in (MODE_I2V, MODE_KF2V):
         return request.get("resolution", "720P")
+    # Modes that use size parameter (wan2.6 t2v, r2v)
     if mode in (MODE_T2V, MODE_R2V):
+        # If resolution is explicitly set (wan2.7), use it
+        if request.get("resolution"):
+            return request["resolution"]
         size = request.get("size", "1280*720")
         try:
             width, height = size.split("*")

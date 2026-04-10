@@ -1,6 +1,6 @@
 ---
 name: qwencloud-model-selector
-description: "[QwenCloud] Recommend the best Qwen model and parameters. TRIGGER when: choosing between Qwen models, comparing Qwen model pricing, understanding Qwen model capabilities, when an execution skill needs model selection advice, or user explicitly invokes this skill by name (e.g. use qwencloud-model-selector). DO NOT TRIGGER when: non-Qwen model discussions (OpenAI, Gemini, etc.), general AI questions unrelated to Qwen."
+description: "[QwenCloud] Recommend the best Qwen model and parameters. TRIGGER when: choosing between Qwen models, comparing Qwen model pricing, understanding Qwen model capabilities, checking usage or billing, viewing cost history, when an execution skill needs model selection advice, or user explicitly invokes this skill by name (e.g. use qwencloud-model-selector). DO NOT TRIGGER when: non-Qwen model discussions (OpenAI, Gemini, etc.), general AI questions unrelated to Qwen."
 compatibility: "Advisory skill, no execution dependencies. Cursor: auto-loaded. Claude Code: read this skill's SKILL.md before first use."
 ---
 
@@ -83,8 +83,8 @@ ambiguous and you need to compare capabilities.
 | Reasoning                      | "think step by step", "reason", "analyze"         | qwq-plus (text) · qvq-max (vision)                           |
 | Coding                         | "write code", "implement", "debug"                | qwen3-coder-plus                                             |
 | OCR / document                 | "extract text", "OCR", "scan"                     | qwen-vl-ocr                                                  |
-| Long context                   | "long document", "large file"                     | qwen3.5-plus (1M context)                                    |
-| Multimodal (text+image+video)  | "analyze image", "understand video" + text        | qwen3.5-plus (unified multimodal)                            |
+| Long context                   | "long document", "large file"                     | qwen3.6-plus (1M context)                                    |
+| Multimodal (text+image+video)  | "analyze image", "understand video" + text        | qwen3.6-plus (unified multimodal)                            |
 | Voice interaction / omni       | "voice chat", "speak", "listen"                   | qwen3-omni-flash                                             |
 | Built-in tools                 | "search the web", "run code", "use tools"         | qwen3-max (web search, code interpreter)                     |
 | Image editing / style transfer | "edit image", "style transfer", "reference image" | wan2.6-image (preferred) · wan2.5-i2i-preview                |
@@ -124,8 +124,8 @@ No signals detected, clear task → use the Canonical Default for the domain.
 
 | Domain              | Default          | Quality          | Speed              | Cost               |
 |---------------------|------------------|------------------|--------------------|--------------------|
-| text.chat           | qwen3.5-plus     | qwen3-max        | qwen3.5-flash      | qwen-turbo         |
-| vision.analyze      | qwen3-vl-plus    | qwen3-vl-plus    | qwen3-vl-flash     | qwen3-vl-flash     |
+| text.chat           | qwen3.6-plus     | qwen3-max        | qwen3.5-flash      | qwen-turbo         |
+| vision.analyze      | qwen3.6-plus     | qwen3-vl-plus    | qwen3-vl-flash     | qwen3-vl-flash     |
 | omni (voice+vision) | qwen3-omni-flash | qwen3-omni-flash | qwen3-omni-flash   | —                  |
 | image.generate      | wan2.6-t2i       | wan2.6-t2i       | wan2.2-t2i-flash   | wan2.2-t2i-flash   |
 | image.edit          | wan2.6-image     | wan2.6-image     | wan2.5-i2i-preview | wan2.5-i2i-preview |
@@ -142,12 +142,12 @@ No signals detected, clear task → use the Canonical Default for the domain.
 
 | Use Case                 | Recommended      | Why                                                                                                                 |
 |--------------------------|------------------|---------------------------------------------------------------------------------------------------------------------|
-| General chat/assistant   | qwen3.5-plus     | Best balance of quality, speed, cost. **Also accepts image/video input** (multimodal). Thinking enabled by default. |
+| General chat/assistant   | qwen3.6-plus     | **Latest flagship.** Best balance of quality, speed, cost. **Also accepts image/video input** (multimodal). Thinking enabled by default. 1M context. |
 | Fast responses, low cost | qwen3.5-flash    | 3x faster, 70% cheaper than Plus. Thinking enabled by default.                                                      |
 | Highest quality          | qwen3-max        | Strongest reasoning. Built-in tools (web search, code interpreter). Supports thinking mode.                         |
 | Code generation          | qwen3-coder-next | Best balance of code quality, speed, cost. Agentic coding. `qwen3-coder-plus` for highest quality.                  |
 | Complex reasoning        | qwq-plus         | Chain-of-thought reasoning specialist                                                                               |
-| Long documents           | qwen3.5-plus     | Up to 1M context. For >1M needs, see [model-list.md](references/model-list.md).                                     |
+| Long documents           | qwen3.6-plus     | Up to 1M context. For >1M needs, see [model-list.md](references/model-list.md).                                     |
 | Budget/high volume       | qwen-turbo       | Cheapest per-token cost                                                                                             |
 
 ### Image Models
@@ -182,9 +182,10 @@ No signals detected, clear task → use the Canonical Default for the domain.
 
 | Use Case            | Recommended    | Why                                                                                                                            |
 |---------------------|----------------|--------------------------------------------------------------------------------------------------------------------------------|
-| Best accuracy       | qwen3-vl-plus  | Highest vision understanding. Thinking mode supported. 256K context.                                                           |
+| Best accuracy       | qwen3.6-plus   | **Latest flagship.** Multimodal (text + image + video). Surpasses qwen3-vl series on many benchmarks. Thinking enabled by default. |
+| High-precision localization | qwen3-vl-plus | Highest vision understanding for object localization (2D/3D), document/webpage parsing. Thinking mode supported. 256K context. |
 | Fast analysis       | qwen3-vl-flash | Quick image understanding. Thinking mode supported.                                                                            |
-| Unified text+vision | qwen3.5-plus   | Multimodal (text + image + video). Surpasses qwen3-vl series on many benchmarks. Use when both text quality and vision matter. |
+| Unified text+vision | qwen3.6-plus   | Best when both text quality and vision matter. 1M context.                                                                     |
 
 ### Omni Models
 
@@ -192,6 +193,16 @@ No signals detected, clear task → use the Canonical Default for the domain.
 |---------------------|---------------------------|---------------------------------------------------------------------------------------|
 | Voice + vision chat | qwen3-omni-flash          | Text/image/audio/video → text or speech. 49 voices, 10 languages. Thinking supported. |
 | Real-time voice     | qwen3-omni-flash-realtime | Streaming audio input + built-in VAD. 49 voices.                                      |
+
+## Model Detail Page
+
+When the user wants to learn more about a specific model (capabilities, specifications, benchmarks, etc.), direct them to the model detail page:
+
+**URL pattern**: `https://www.qwencloud.com/models/<model-name>`
+
+Example: for `qwen3.6-plus`, the URL is `https://www.qwencloud.com/models/qwen3.6-plus`.
+
+> **IMPORTANT**: The `<model-name>` in the URL must exactly match the model ID used in this skill (e.g. `qwen3.6-plus`, `wan2.7-t2v`, `qwen3-tts-flash`). NEVER guess or modify the model name segment.
 
 ## Pricing Guidance
 
@@ -202,12 +213,25 @@ No signals detected, clear task → use the Canonical Default for the domain.
   official URLs.
 - **Cost formula**: `Cost = Tokens ÷ 1,000,000 × Unit price`. 1K Chinese chars ≈ 1,200-1,500 tokens.
 - **Free quota**: Some models offer a limited free quota after activation — but quotas may have been consumed, expired,
-  or changed without notice. **Always present the paid unit price first.** Mention free quota only as something the user
-  should verify in their [QwenCloud console](https://home.qwencloud.com/free-quota).
+  or changed without notice. **Always present the paid unit price first.** Mention free quota only as a possibility that the user should verify in their QwenCloud console. **Do not guess or fabricate any free-quota URL.**
 - **Cost tips**:
     - Use Batch calling for 50% off in non-realtime scenarios
     - Enable context cache for repeated contexts
     - Use flash/turbo series for non-critical tasks
+
+### Usage & Billing Console
+
+When the user asks about actual usage, spending history, or billing details — direct them to the appropriate console page (these are NOT accessible via API; the user must open them in a browser):
+
+| Question | Console Page |
+|----------|--------------|
+| "How much have I used?" / "Show my usage" | [Usage Analytics](https://home.qwencloud.com/analytics) |
+| "Show my bill" / "How much did I spend?" (pay-as-you-go) | [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
+| "Show my Coding Plan bill" / "Coding Plan usage" | [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan) |
+
+> **Important**: This skill can estimate costs based on published unit prices, but **cannot** query the user's actual account balance, historical spending, or remaining quota. For real-time account data, always direct the user to the console pages above.
+>
+> **NEVER fabricate, guess, or construct usage/billing/console URLs.** Only provide the exact links listed in this skill. If a URL is not listed here, do not invent one.
 
 ### Cost Estimation Disclaimer (MANDATORY)
 
@@ -224,7 +248,7 @@ response format.
 **Required disclaimer (Chinese response):**
 
 > ⚠️ **费用说明**：以上费用为基于官方公示单价的预估价格，仅供参考。实际费用受 Token
-> 消耗量、上下文长度阶梯定价、Batch/缓存折扣及计费策略调整等因素影响，请以QwenCloud控制台的实际账单为准。部分模型可能提供限时免费额度，但免费额度的可用性、额度量及有效期随时可能调整，请在控制台确认您的账户是否仍有剩余额度，**切勿假设本次调用免费**。最新定价详见 [模型定价页](https://docs.qwencloud.com/developer-guides/getting-started/pricing)。
+> 消耗量、上下文长度阶梯定价、Batch/缓存折扣及计费策略调整等因素影响，请以QwenCloud控制台的实际账单为准：[按量付费账单](https://home.qwencloud.com/billing/pay-as-you-go) | [Coding Plan 账单](https://home.qwencloud.com/billing/coding-plan) | [用量分析](https://home.qwencloud.com/analytics)。部分模型可能提供限时免费额度，但免费额度的可用性、额度量及有效期随时可能调整，请在控制台确认您的账户是否仍有剩余额度，**切勿假设本次调用免费**。最新定价详见 [模型定价页](https://docs.qwencloud.com/developer-guides/getting-started/pricing)。
 
 **Required disclaimer (English response):**
 
@@ -232,9 +256,11 @@ response format.
 > are provided for reference only. Actual charges depend on token consumption, tiered context-length pricing,
 > Batch/cache discounts, and billing policy updates. Some models may offer a time-limited free quota, but
 > quota availability, amounts, and validity periods are subject to change — **do not assume this call is free**. Please
-> verify your remaining quota in
-> the [QwenCloud console](https://home.qwencloud.com/free-quota) and refer to the actual
-> bill for definitive costs. See [Model Pricing](https://docs.qwencloud.com/developer-guides/getting-started/pricing) for
+> verify your remaining quota in the QwenCloud console and refer to your actual
+> bill for definitive costs: [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
+> [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan) |
+> [Usage Analytics](https://home.qwencloud.com/analytics).
+> See [Model Pricing](https://docs.qwencloud.com/developer-guides/getting-started/pricing) for
 > the latest rates.
 
 **Rules:**
@@ -255,8 +281,8 @@ response format.
 All standard text, vision, image, video, audio, and coding models are available. Some models offer free
 quota (verify in console).
 
-- **Text**: qwen3-max, qwen3.5-plus, qwen3.5-flash, qwen-turbo, qwq-plus, qwen3-coder-next/plus/flash, qwen-plus-character, qwen-plus-character-ja, qwen-flash-character
-- **Vision**: qwen3-vl-plus, qwen3-vl-flash, qvq-max, qwen-vl-ocr, qwen-vl-max, qwen-vl-plus
+- **Text**: qwen3.6-plus, qwen3-max, qwen3.5-plus, qwen3.5-flash, qwen-turbo, qwq-plus, qwen3-coder-next/plus/flash, qwen-plus-character, qwen-plus-character-ja, qwen-flash-character
+- **Vision**: qwen3.6-plus (multimodal), qwen3-vl-plus, qwen3-vl-flash, qvq-max, qwen-vl-ocr, qwen-vl-max, qwen-vl-plus
 - **Omni**: qwen3-omni-flash (+ realtime), qwen-omni-turbo (+ realtime)
 - **Image generation (text-to-image)**: wan2.6-t2i, wan2.5-t2i-preview, wan2.2-t2i-flash, z-image-turbo
 - **Image editing (requires reference images)**: wan2.6-image, wan2.5-i2i-preview
@@ -277,6 +303,7 @@ Several models support hybrid thinking/non-thinking modes:
 
 | Model                               | Thinking Default | Notes                                                                                         |
 |-------------------------------------|------------------|-----------------------------------------------------------------------------------------------|
+| qwen3.6-plus                        | **On**           | Latest flagship. Thinking enabled by default. Use `enable_thinking: false` to disable.       |
 | qwen3.5-plus                        | **On**           | Thinking enabled by default. Use `enable_thinking: false` to disable.                         |
 | qwen3.5-flash                       | **On**           | Thinking enabled by default.                                                                  |
 | qwen3-max                           | Off              | Use `enable_thinking: true` for complex reasoning. Built-in tools available in thinking mode. |
@@ -291,7 +318,7 @@ token cost. Enable only when the user explicitly asks for deep reasoning or the 
 ## Anti-Patterns
 
 - **Only recommend models listed in this skill** — never fabricate model names.
-- **When unsure**, use `qwen3.5-plus` as a safe default for text tasks.
+- **When unsure**, use `qwen3.6-plus` as a safe default for text tasks.
 - **🚨 NEVER invent or guess any price figure** — only use pricing from `references/pricing.md` or the
   [official pricing page](https://docs.qwencloud.com/developer-guides/getting-started/pricing). If the data is not
   available, say so and link to the official page. **Fabricating a price is a critical failure.**

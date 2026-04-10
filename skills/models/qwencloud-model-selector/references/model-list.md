@@ -1,14 +1,15 @@
 # Bailian Model List
 
 > Source: https://www.qwencloud.com/models
-> Updated: 2026-03-06
+> Updated: 2026-04-03
 
 ## Text Generation — Commercial
 
 | Model ID          | Context                             | Thinking         | Key Info                                                                                                                           |
 |-------------------|-------------------------------------|------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | qwen3-max         | 256K                                | Yes (hybrid)     | Strongest. Built-in tools (web search, code interpreter). Tiered pricing.                                                          |
-| qwen3.5-plus      | 1M                                  | Yes (default on) | **Multimodal** (text + image + video input). On par with qwen3-max for text; surpasses qwen3-vl series for vision. Tiered pricing. |
+| qwen3.6-plus      | 1M                                  | Yes (default on) | **Latest flagship.** Multimodal (text + image + video). Best balance of quality, speed, cost. Surpasses qwen3-vl series. Tiered pricing. |
+| qwen3.5-plus      | 1M                                  | Yes (default on) | Multimodal (text + image + video input). On par with qwen3-max for text; surpasses qwen3-vl series for vision. Tiered pricing. |
 | qwen3.5-flash     | 1M                                  | Yes (default on) | Fastest Qwen3.5. Tiered pricing.                                                                                                   |
 | qwen-plus         | 1M                                  | Yes (hybrid)     | General purpose (Qwen3 series). Tiered pricing.                                                                                    |
 | qwen-flash        | 1M                                  | Yes (hybrid)     | Economy. Tiered pricing. Context cache supported.                                                                                  |
@@ -54,7 +55,9 @@
 
 | Model ID | Key Info |
 |----------|----------|
-| wan2.6-t2i | Latest text-to-image, sync+async, best quality |
+| wan2.7-image-pro | **Multi-function** (4K support) — text-to-image, image editing (0–9 images), sequential multi-image, interactive editing (bbox), thinking mode, color palette. Max 4K for t2i, 2K for editing |
+| wan2.7-image | **Multi-function** (faster) — same as pro but max 2K, no 4K support |
+| wan2.6-t2i | Text-to-image, sync+async, best quality in wan2.6 series |
 | wan2.6-image | Image **editing** (NOT for pure text-to-image): style transfer, subject consistency (1–4 refs), interleaved text-image output, 2K. Requires reference_images or enable_interleave=true |
 | wan2.5-i2i-preview | Image editing: single-image editing, multi-image fusion (1–3 refs), subject consistency, async-only |
 | wan2.5-t2i-preview | Flexible resolution text-to-image |
@@ -72,6 +75,8 @@
 
 | Model ID | Key Info |
 |----------|----------|
+| wan2.7-t2v | Text-to-video, ratio control, auto-dubbing, 5000 char prompt, 720P/1080P |
+| wan2.7-i2v | Image-to-video, unified media[] protocol: first/last frame, video continuation, audio sync |
 | wan2.6-t2v | Text-to-video, audio, multi-shot, 2–15s |
 | wan2.6-i2v / i2v-flash | Image-to-video, audio, multi-shot, 2–15s |
 | wan2.6-r2v / r2v-flash | Reference-based, multi-character, 2–10s |

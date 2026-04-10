@@ -227,6 +227,10 @@ request JSON fields (--request / --file):
 
 models (Wan series):
   wan2.6-t2i          (default) Text-to-image — use for prompt-only generation
+  wan2.7-image-pro    Multi-function (higher quality) — text-to-image, image editing,
+                      multi-image composition, interleaved output
+  wan2.7-image        Multi-function — text-to-image, image editing, multi-image
+                      composition, interleaved output
   wan2.6-image        Image editing ONLY — requires reference_images or
                       enable_interleave=true. NOT for pure text-to-image!
   wan2.5-i2i-preview  Image editing + multi-image fusion (1-3 ref images, async-only)
@@ -255,6 +259,23 @@ environment variables:
 examples:
   # Text-to-image (Wan, default)
   python scripts/image.py --request '{"prompt":"a cat sitting on a windowsill"}'
+
+  # Text-to-image with wan2.7-image-pro (4K, thinking mode)
+  python scripts/image.py --request '{"prompt":"a flower shop with delicate windows",
+    "size":"4K","thinking_mode":true}' --model wan2.7-image-pro
+
+  # Sequential multi-image with wan2.7 (up to 12 images)
+  python scripts/image.py --request '{"prompt":"A stray orange cat through four seasons",
+    "enable_sequential":true,"n":4}' --model wan2.7-image-pro
+
+  # Image editing with wan2.7 (0-9 reference images)
+  python scripts/image.py --request '{"prompt":"Apply graffiti from image 2 to the car in image 1",
+    "reference_images":["car.jpg","graffiti.jpg"]}' --model wan2.7-image-pro
+
+  # Interactive editing with bbox (wan2.7)
+  python scripts/image.py --request '{"prompt":"Place the clock from image 1 at the marked location in image 2",
+    "reference_images":["clock.jpg","room.jpg"],
+    "bbox_list":[[],[[989,515,1138,681]]]}' --model wan2.7-image-pro
 
   # Image editing with wan2.6-image
   python scripts/image.py --request '{"prompt":"Apply watercolor style",

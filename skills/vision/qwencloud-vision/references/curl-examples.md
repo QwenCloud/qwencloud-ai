@@ -13,7 +13,7 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/co
   -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "qwen3.5-plus",
+    "model": "qwen3.6-plus",
     "messages": [{
       "role": "user",
       "content": [
@@ -34,12 +34,12 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/co
   -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "qwen3.5-plus",
+    "model": "qwen3.6-plus",
     "messages": [{
       "role": "user",
       "content": [
-        {"type": "image_url", "image_url": {"url": "https://example.com/img1.jpg"}},
-        {"type": "image_url", "image_url": {"url": "https://example.com/img2.jpg"}},
+        {"type": "image_url", "image_url": {"url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20241022/emyrja/dog_and_girl.jpeg"}},
+        {"type": "image_url", "image_url": {"url": "https://img.alicdn.com/imgextra/i2/O1CN01ktT8451iQutqReELT_!!6000000004408-0-tps-689-487.jpg"}},
         {"type": "text", "text": "Compare these two images."}
       ]
     }],
@@ -56,11 +56,11 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/co
   -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "qwen3.5-plus",
+    "model": "qwen3.6-plus",
     "messages": [{
       "role": "user",
       "content": [
-        {"type": "video_url", "video_url": {"url": "https://example.com/video.mp4"}},
+        {"type": "video_url", "video_url": {"url": "https://img.alicdn.com/imgextra/i1/NotRealJustExample/video.mp4"}},
         {"type": "text", "text": "Describe what happens in this video."}
       ]
     }],
@@ -81,7 +81,7 @@ curl -sS -X POST "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/co
     "messages": [{
       "role": "user",
       "content": [
-        {"type": "image_url", "image_url": {"url": "https://example.com/document.jpg"}},
+        {"type": "image_url", "image_url": {"url": "https://img.alicdn.com/imgextra/i2/O1CN01ktT8451iQutqReELT_!!6000000004408-0-tps-689-487.jpg"}},
         {"type": "text", "text": "Read all text in this image."}
       ]
     }],
