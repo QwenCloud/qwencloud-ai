@@ -1,6 +1,6 @@
-<p align="center">
+<!-- <p align="center">
   <img src="[./assets/logo.png](https://www.qwencloud.com/)" width="160" alt="QwenCloud AI Skills" /> 
-</p>
+</p> -->
 
 <h1 align="center">Qwen Cloud AI Skills</h1>
 
