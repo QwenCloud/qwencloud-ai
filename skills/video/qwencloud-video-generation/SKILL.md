@@ -214,9 +214,10 @@ the [official pricing page](https://docs.qwencloud.com/developer-guides/getting-
 
 Quick example: wan2.6-t2v 5s 720P — check
 the [official pricing page](https://docs.qwencloud.com/developer-guides/getting-started/pricing) for current per-second
-rates. Some models may offer a limited free quota — **do not assume any call is free**; the user should verify in their QwenCloud console.
+rates. Some models may offer a limited free quota — **do not assume any call is free**; use the **qwencloud-usage** skill to check remaining free tier quota, or verify in the user's [QwenCloud console](https://home.qwencloud.com/benefits).
 
-To check actual usage and bills: [Usage Analytics](https://home.qwencloud.com/analytics) |
+To check actual usage and bills: use the **qwencloud-usage** skill, or visit the console:
+[Usage Analytics](https://home.qwencloud.com/analytics) |
 [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
 [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan)
 

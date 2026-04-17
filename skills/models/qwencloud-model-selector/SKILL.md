@@ -100,7 +100,7 @@ Adjust model tier based on how the model will be used.
 |-------------------------|-----------------------------------------|-------------------------------------------------------------------------|
 | Interactive / real-time | "chat", "real-time", "interactive"      | Prefer flash/turbo variants; enable streaming                           |
 | Batch / offline         | "batch", "offline", "background"        | Quality model + Batch API (50% off)                                     |
-| One-off trial           | "try", "test", "experiment"             | Quality model; check if free quota is still available in user's console |
+| One-off trial           | "try", "test", "experiment"             | Quality model; use **qwencloud-usage** skill or check console for remaining free quota |
 | High-volume production  | "production", "at scale", "high volume" | Cost-optimize: flash/turbo + context cache                              |
 | Repeated context        | "template", "same prompt", "repeated"   | Enable context caching for input token discount                         |
 
@@ -111,7 +111,7 @@ Given the candidates from dimensions 1–2, compare costs and apply modifiers.
 - Pricing reference: [pricing.md](references/pricing.md). For the latest rates, check
   the [official pricing page](https://docs.qwencloud.com/developer-guides/getting-started/pricing).
 - **Free quota**: Some models offer a limited free quota after activation. However, quotas may have been consumed,
-  expired, or changed. **Never assume remaining free quota** — always present the paid unit price.
+  expired, or changed. **Never assume remaining free quota** — always present the paid unit price. Use the **qwencloud-usage** skill to check remaining free tier quota.
 - **Batch API**: 50% off both input and output tokens for non-realtime workloads.
 - **Context cache**: Input token discount for repeated/templated contexts.
 - **Tiered pricing**: Some models charge more per token as input length increases — check pricing tables for
@@ -213,7 +213,8 @@ Example: for `qwen3.6-plus`, the URL is `https://www.qwencloud.com/models/qwen3.
   official URLs.
 - **Cost formula**: `Cost = Tokens ÷ 1,000,000 × Unit price`. 1K Chinese chars ≈ 1,200-1,500 tokens.
 - **Free quota**: Some models offer a limited free quota after activation — but quotas may have been consumed, expired,
-  or changed without notice. **Always present the paid unit price first.** Mention free quota only as a possibility that the user should verify in their QwenCloud console. **Do not guess or fabricate any free-quota URL.**
+  or changed without notice. **Always present the paid unit price first.** Mention free quota only as something the user
+  should verify in their [QwenCloud console](https://home.qwencloud.com/benefits).
 - **Cost tips**:
     - Use Batch calling for 50% off in non-realtime scenarios
     - Enable context cache for repeated contexts
@@ -230,8 +231,6 @@ When the user asks about actual usage, spending history, or billing details — 
 | "Show my Coding Plan bill" / "Coding Plan usage" | [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan) |
 
 > **Important**: This skill can estimate costs based on published unit prices, but **cannot** query the user's actual account balance, historical spending, or remaining quota. For real-time account data, always direct the user to the console pages above.
->
-> **NEVER fabricate, guess, or construct usage/billing/console URLs.** Only provide the exact links listed in this skill. If a URL is not listed here, do not invent one.
 
 ### Cost Estimation Disclaimer (MANDATORY)
 
@@ -256,7 +255,8 @@ response format.
 > are provided for reference only. Actual charges depend on token consumption, tiered context-length pricing,
 > Batch/cache discounts, and billing policy updates. Some models may offer a time-limited free quota, but
 > quota availability, amounts, and validity periods are subject to change — **do not assume this call is free**. Please
-> verify your remaining quota in the QwenCloud console and refer to your actual
+> verify your remaining quota in
+> the [QwenCloud console](https://home.qwencloud.com/benefits) and refer to your actual
 > bill for definitive costs: [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
 > [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan) |
 > [Usage Analytics](https://home.qwencloud.com/analytics).

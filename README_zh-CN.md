@@ -1,6 +1,6 @@
-<p align="center">
-  <img src="./assets/logo.png" width="160" alt="QwenCloud AI Skills" />
-</p>
+<!-- <p align="center">
+  <img src="[./assets/logo.png](https://www.qwencloud.com/)" width="160" alt="QwenCloud AI Skills" /> 
+</p> -->
 
 <h1 align="center">Qwen Cloud AI Skills</h1>
 
@@ -25,7 +25,7 @@
 
 - 🤖 **Agent 原生** — Agent 帮你选模型、调参数、处理报错，你只管说需求。
 - ⚡ **一行安装** — 一条命令装完即用，零配置，无需对接 SDK。
-- 🧠 **7 个技能，一个入口** — 文本、图像、视频、语音、视觉、模型选择、认证，全部内置。
+- 🧠 **8 个技能，一个入口** — 文本、图像、视频、语音、视觉、模型选择、认证、用量，全部内置。
 - 🌐 **适配多种 Agent** — 可接入多种支持 [Agent Skills](https://agentskills.io) 的 Agent，即装即用。
 
 <p align="center">
@@ -108,11 +108,12 @@ npx skills add qwencloud/qwencloud-ai
 | 能力 | 试试这样说 |
 |------|-----------|
 | **文本批量处理** | "写个脚本，调 Qwen-Plus 把这一万份文档批量润色" · "用最便宜的文本模型，把这个文件夹里所有 PDF 逐篇总结" |
-| **图片生成** | "帮我批量生成 20 张不同风格的产品海报，水墨、扁平、3D 各来几张" · "写个流程，把 /assets 里的图片统一加水印并扩展背景" |
+| **图片生成** | "帮我批量生成 20 张不同风格的产品海报——水墨、扁平、3D 各来几张" · "写个流程，给 /assets 里的图片统一加水印并扩展背景" |
 | **视频生成** | "把这 5 张产品图，每张生成一段 5 秒的展示短视频" · "根据这段脚本和关键帧，生成一段电影感的开场视频" |
 | **语音** | "把这本有声书的 30 个章节全部转成语音，用温暖女声" · "给这个播客列表里每一集生成中英双语的音频开场白" |
-| **视觉理解** | "写个脚本，调 VL 模型把这个文件夹里的截图文字提取出来，记录到 Excel" · "批量分析这 200 张户型图，按房间逐一输出结构说明" |
+| **视觉理解** | "写个脚本，调 VL 模型把这个文件夹里的截图文字提取出来，保存到 Excel" · "批量分析这 200 张户型图，按房间逐一输出结构说明" |
 | **模型选择** | "挑一个最省钱的模型来处理这批翻译" · "给这个问题选一个更强的推理模型" |
+| **用量与账单** | "查查我 qwen3.6-plus 的免费额度还剩多少" · "看一下上个月的费用明细" · "我的编程计划用量快超限了吗？" |
 
 ---
 
@@ -121,12 +122,13 @@ npx skills add qwencloud/qwencloud-ai
 | 技能 | 能力 |
 |------|------|
 | `qwencloud-text` | 文本生成、对话、写代码、推理、函数调用 |
-| `qwencloud-vision` | 图片 / 视频理解、OCR、图表分析 |
+| `qwencloud-vision` | 图片与视频理解、OCR、图表分析 |
 | `qwencloud-image-generation` | 文生图、图片编辑、风格迁移 |
 | `qwencloud-video-generation` | 文生视频、图生视频、视频编辑 |
 | `qwencloud-audio-tts` | 文字转语音，多种音色可选 |
 | `qwencloud-model-selector` | 根据场景推荐最合适的模型 |
 | `qwencloud-ops-auth` | API Key 与认证管理 |
+| `qwencloud-usage` | 用量查询、免费额度查看、订阅查询、账单与计费查询 |
 
 ---
 
@@ -136,7 +138,6 @@ npx skills add qwencloud/qwencloud-ai
 
 | 分类 | 技能（规划中） | 能做什么 |
 |------|--------------|---------|
-| **账号** | `qwencloud-account` | 用量查询、免费额度查看、订阅查询、账单与计费查询 |
 | **模型** | `qwencloud-model-manager` | 专属模型部署、版本管理与生命周期管理 |
 | **开发** | `qwencloud-dev` | Prompt 调试与优化、API 调用示例生成 |
 | **训练** | `qwencloud-finetune` | 数据集管理、微调任务创建与进度跟踪、结果评估 |

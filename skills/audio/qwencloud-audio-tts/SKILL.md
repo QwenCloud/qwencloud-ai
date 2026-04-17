@@ -204,7 +204,7 @@ When passing generated audio to another skill (e.g., video-gen audio overlay):
 | `400` | Invalid parameters (missing text/voice) | Validate request body |
 | `429` / `5xx` | Rate limit or server error | Retry with backoff |
 
-> **Usage & billing**: To check actual usage or spending, direct the user to the QwenCloud console:
+> **Usage & billing**: Use the **qwencloud-usage** skill to check usage, free tier quota, and billing directly. Alternatively, the user can visit the QwenCloud console:
 > [Usage Analytics](https://home.qwencloud.com/analytics) |
 > [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
 > [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan)

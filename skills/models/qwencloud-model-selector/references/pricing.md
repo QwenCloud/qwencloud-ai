@@ -16,7 +16,7 @@
 - Some models have **tiered pricing** based on input context length (e.g. ≤32K, ≤128K, ≤256K, ≤1M)
 - Thinking mode output may be priced differently from non-thinking output
 - **Batch API**: 50% off for supported models
-- Some models may offer a limited free quota — **do not assume the user has remaining free quota**; verify in the QwenCloud console
+- Some models may offer a limited free quota — **do not assume the user has remaining free quota**; use the **qwencloud-usage** skill to check, or verify in the [QwenCloud console](https://home.qwencloud.com/benefits)
 
 ## Vision Understanding (per 1M tokens)
 
@@ -90,10 +90,9 @@
 ## Notes
 
 - **API Key must be created from the** [QwenCloud Console](https://home.qwencloud.com/api-keys).
-- **Free quota**: Some models include a limited free quota after activating QwenCloud. **However**: free quota amounts, eligibility, and validity periods are subject to change without notice. Quotas may have already been consumed or expired. **Never assume the user has remaining free quota** — always present the paid unit price as the primary reference and mention free quota only as a possibility that the user should verify in their QwenCloud console.
+- **Free quota**: Some models include a limited free quota after activating QwenCloud. **However**: free quota amounts, eligibility, and validity periods are subject to change without notice. Quotas may have already been consumed or expired. **Never assume the user has remaining free quota** — always present the paid unit price as the primary reference. Use the **qwencloud-usage** skill to check remaining free tier quota, or direct the user to the [QwenCloud console](https://home.qwencloud.com/benefits).
 - **Batch calling**: Supported models get 50% off (both input and output).
 - **Context cache**: Eligible models get input token discounts.
 - **Tiered pricing**: Some models have higher per-token cost as input length increases.
 - **For the latest prices**: Always check the [official pricing page](https://docs.qwencloud.com/developer-guides/getting-started/pricing).
-- **View actual usage and bills**: [Usage Analytics](https://home.qwencloud.com/analytics) | [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) | [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan).
-- **Model detail page**: For more information about a specific model, visit `https://www.qwencloud.com/models/<model-name>` (e.g. https://www.qwencloud.com/models/qwen3.6-plus).
+- **View actual usage and bills**: Use the **qwencloud-usage** skill, or visit the console: [Usage Analytics](https://home.qwencloud.com/analytics) | [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) | [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan).

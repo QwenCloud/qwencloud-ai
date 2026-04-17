@@ -218,7 +218,7 @@ Optimized for text extraction. Supports multi-language, skewed images, tables, f
 | 429 | Rate limited | Retry with exponential backoff |
 | 5xx | Server error | Retry with exponential backoff |
 
-> **Usage & billing**: To check actual usage or spending, direct the user to the QwenCloud console:
+> **Usage & billing**: Use the **qwencloud-usage** skill to check usage, free tier quota, and billing directly. Alternatively, the user can visit the QwenCloud console:
 > [Usage Analytics](https://home.qwencloud.com/analytics) |
 > [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
 > [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan)

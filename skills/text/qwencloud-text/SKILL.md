@@ -215,7 +215,7 @@ For detailed usage of each feature, see [api-guide.md](references/api-guide.md) 
 | `Invalid parameter`     | Bad request body                    | Validate JSON and field types                                                              |
 | `TypeError: ...proxies` | openai SDK vs httpx incompatibility | `pip install --upgrade openai` (>=1.55.0); or use script (pure stdlib)                     |
 
-> **Usage & billing**: To check actual usage or spending, direct the user to the QwenCloud console:
+> **Usage & billing**: Use the **qwencloud-usage** skill to check usage, free tier quota, and billing directly. Alternatively, the user can visit the QwenCloud console:
 > [Usage Analytics](https://home.qwencloud.com/analytics) |
 > [Pay-as-you-go Billing](https://home.qwencloud.com/billing/pay-as-you-go) |
 > [Coding Plan Billing](https://home.qwencloud.com/billing/coding-plan)

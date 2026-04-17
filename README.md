@@ -25,7 +25,7 @@
 
 - 🤖 **Agent-native** — Your agent picks the model, tunes the call, and handles errors. You just talk.
 - ⚡ **One-line install** — One command and you're ready. No SDK, no boilerplate.
-- 🧠 **7 skills, one interface** — Text, image, video, voice, vision, model selection, and auth — all built in.
+- 🧠 **8 skills, one interface** — Text, image, video, voice, vision, model selection, auth， and usage — all built in.
 - 🌐 **Works across many agents** — Plug into many [Agent Skills](https://agentskills.io)-compatible agents instantly.
 
 <p align="center">
@@ -113,6 +113,7 @@ Tell your agent what you need — it writes the code, picks the right QwenCloud 
 | **Voice** | "Convert all 30 chapters of this audiobook to speech, use a warm female voice" · "Generate bilingual audio intros for each episode in this podcast list" |
 | **Vision** | "Write a script to extract text from every screenshot in this folder and save to an Excel" · "Batch-analyze these 200 floor plan images and output a room-by-room breakdown" |
 | **Model Selection** | "Pick the cheapest model that can handle this translation batch" · "Choose a stronger reasoning model for this problem" |
+| **Usage & Billing** | "Check my remaining free tier quota for qwen3.6-plus" · "Show me the cost breakdown for last month" · "Am I close to hitting my coding plan limits?" |
 
 ---
 
@@ -127,6 +128,7 @@ Tell your agent what you need — it writes the code, picks the right QwenCloud 
 | `qwencloud-audio-tts` | Text-to-speech with multiple voice profiles |
 | `qwencloud-model-selector` | Recommends the right model for your use case |
 | `qwencloud-ops-auth` | API key and authentication management |
+| `qwencloud-usage` | Usage queries, free tier checks, subscriptions, billing |
 
 ---
 
@@ -136,7 +138,6 @@ We're expanding the Skills ecosystem to cover more core QwenCloud scenarios — 
 
 | Category | Skill (Planned) | What it does |
 |----------|-----------------|-------------|
-| **Account** | `qwencloud-account` | Usage queries, free tier checks, subscriptions, billing |
 | **Models** | `qwencloud-model-manager` | Dedicated model deployment, versioning, and lifecycle management |
 | **Dev** | `qwencloud-dev` | Prompt debugging & optimization, API call examples |
 | **Training** | `qwencloud-finetune` | Dataset management, fine-tune job creation & tracking, evaluation |

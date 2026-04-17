@@ -71,7 +71,7 @@ If the user's key starts with `sk-sp-`, guide them to obtain a standard key from
 
 ### Viewing Bills
 
-Billing details are available in the QwenCloud console (not accessible via API — the user must open them in a browser):
+Use the **qwencloud-usage** skill to query usage, free tier quota, and billing directly. Alternatively, billing details are available in the QwenCloud console:
 
 | Key Type | Billing Page |
 |----------|--------------|
