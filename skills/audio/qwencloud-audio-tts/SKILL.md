@@ -67,6 +67,8 @@ Scripts require a **standard QwenCloud API key** (`sk-...`). Coding Plan keys (`
 
 > **Model details**: For more information about a specific model, direct the user to its detail page: `https://www.qwencloud.com/models/<model-name>` (replace `<model-name>` with the exact model ID, e.g. `qwen3-tts-flash` → https://www.qwencloud.com/models/qwen3-tts-flash). NEVER modify or guess the model name in the URL.
 
+> **Dynamic model queries**: If the **qwencloud-model-selector** skill or **QwenCloud CLI** (`qwencloud models info <model>`) is available, use it for real-time model data. CLI requires authentication — see the **qwencloud-usage** skill for login flow.
+
 ## Available Voices
 
 | Voice | Description | Script |

@@ -132,24 +132,6 @@ Tell your agent what you need — it writes the code, picks the right QwenCloud 
 
 ---
 
-## Roadmap
-
-We're expanding the Skills ecosystem to cover more core QwenCloud scenarios — so your AI Agent can always access QwenCloud in the most natural, efficient way.
-
-| Category | Skill (Planned) | What it does |
-|----------|-----------------|-------------|
-| **Models** | `qwencloud-model-manager` | Dedicated model deployment, versioning, and lifecycle management |
-| **Dev** | `qwencloud-dev` | Prompt debugging & optimization, API call examples |
-| **Training** | `qwencloud-finetune` | Dataset management, fine-tune job creation & tracking, evaluation |
-| **Deploy** | `qwencloud-deploy` | Custom model deployment |
-| **Observability** | `qwencloud-observe` | Model evaluation, inference log queries, anomaly diagnosis |
-
-As QwenCloud's capabilities grow, the Skills ecosystem will evolve in sync — continuously lowering the barrier for agents to use QwenCloud.
-
-Have an idea? [Open an issue](https://github.com/qwencloud/qwencloud-ai/issues).
-
----
-
 ## Contributing
 
 We'd love your help! Here are a few ways to get involved:

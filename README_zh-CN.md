@@ -132,24 +132,6 @@ npx skills add qwencloud/qwencloud-ai
 
 ---
 
-## 路线图
-
-我们将持续扩展 Skills 能力体系，逐步覆盖 QwenCloud 平台的核心业务场景，确保 AI Agent 始终能以最自然、最高效的方式调用 QwenCloud 的全部能力。
-
-| 分类 | 技能（规划中） | 能做什么 |
-|------|--------------|---------|
-| **模型** | `qwencloud-model-manager` | 专属模型部署、版本管理与生命周期管理 |
-| **开发** | `qwencloud-dev` | Prompt 调试与优化、API 调用示例生成 |
-| **训练** | `qwencloud-finetune` | 数据集管理、微调任务创建与进度跟踪、结果评估 |
-| **部署** | `qwencloud-deploy` | 自定义模型部署 |
-| **可观测性** | `qwencloud-observe` | 模型效果评测、推理日志查询、调用异常诊断 |
-
-随着 QwenCloud 平台能力的不断扩充，Skills 体系也将同步演进，持续降低 Agent 使用 QwenCloud 的门槛。
-
-有想法？欢迎 [提 Issue](https://github.com/qwencloud/qwencloud-ai/issues)。
-
----
-
 ## 参与贡献
 
 欢迎一起来建设！你可以通过以下方式参与：

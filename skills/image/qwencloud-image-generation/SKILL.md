@@ -99,6 +99,8 @@ Qwen Image text-to-image models (`qwen-image-plus`, `qwen-image-max`) use a diff
 
 > **Model details**: For more information about a specific model, direct the user to its detail page: `https://www.qwencloud.com/models/<model-name>` (replace `<model-name>` with the exact model ID, e.g. `wan2.7-image-pro` → https://www.qwencloud.com/models/wan2.7-image-pro). NEVER modify or guess the model name in the URL.
 
+> **Dynamic model queries**: If the **qwencloud-model-selector** skill or **QwenCloud CLI** (`qwencloud models info <model>`) is available, use it for real-time model data. CLI requires authentication — see the **qwencloud-usage** skill for login flow.
+
 ## Execution
 
 > **⚠️ Multiple artifacts**: When generating multiple files in a single session, you MUST append a numeric suffix to each filename (e.g. `out_1.png`, `out_2.png`) to prevent overwrites.

@@ -75,6 +75,8 @@ see its `references/codingplan.md` for details on key types, endpoint mapping, a
 
 > **Model details**: For more information about a specific model, direct the user to its detail page: `https://www.qwencloud.com/models/<model-name>` (replace `<model-name>` with the exact model ID, e.g. `qwen3.6-plus` → https://www.qwencloud.com/models/qwen3.6-plus). NEVER modify or guess the model name in the URL.
 
+> **Dynamic model queries**: If the **qwencloud-model-selector** skill or **QwenCloud CLI** (`qwencloud models info <model>`) is available, use it for real-time model data. CLI requires authentication — see the **qwencloud-usage** skill for login flow.
+
 ## Execution
 
 ### Prerequisites

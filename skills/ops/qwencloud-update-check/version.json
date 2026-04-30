@@ -1,6 +1,6 @@
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "name": "qwencloud/qwencloud-ai",
-  "released": "2026-04-17",
-  "info": "New skill : qwencloud-usage"
+  "released": "2026-04-30",
+  "info": "Use qwencloud-cli in qwencloud-usage and qwencloud-model-selector"
 }

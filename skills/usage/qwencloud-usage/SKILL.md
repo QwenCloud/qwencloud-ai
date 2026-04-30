@@ -9,89 +9,169 @@ Query QwenCloud usage, free tier quota, coding plan status, and pay-as-you-go bi
 
 ## Prerequisites
 
-- Install dependencies before first use:
+- **QwenCloud CLI** must be installed. Verify with:
 
 ```bash
-python3 -m venv .venv
-. .venv/bin/activate
-pip install -r <path-to-skill>/scripts/requirements.txt
+qwencloud version
 ```
 
-- Authentication: No configuration needed on first use (Device Flow auto-login).
+If not installed, run:
+
+```bash
+npm install -g @qwencloud/qwencloud-cli
+```
+
+Node.js >= 18 required.
+
+- Authentication: No configuration needed on first use. The CLI handles non-TTY detection and safe login automatically (see Authentication Flow below).
 
 ### Environment Variables
 
 | Variable                    | Description                                                                                  |
 |-----------------------------|----------------------------------------------------------------------------------------------|
-| `QWENCLOUD_CREDENTIALS_DIR` | Override encrypted file backend directory (default: `~/.qwencloud/secure-store`).            |
+| `QWENCLOUD_KEYRING`         | Set to `plaintext`, `no`, `0`, `false`, or `off` to opt out of OS keychain credential storage. |
+| `QWENCLOUD_CREDENTIALS_DIR` | Override file-based credential directory (default: `~/.qwencloud/credentials`).              |
+
+## Authentication Flow (for Agents)
+
+The CLI auto-detects non-TTY environments and degrades safely — no wrapper script needed.
+
+### TL;DR — 3-step auth path
+
+1. `qwencloud auth status --format json` → `authenticated: true` → skip to commands
+2. `qwencloud auth login --init-only --format json` → extract `verification_url` → open in browser
+3. `qwencloud auth login --complete --format json` → poll until `success` event
+
+### Quick check: already logged in?
+
+```bash
+qwencloud auth status --format json
+```
+
+If `authenticated: true` and token is not expired, skip login entirely.
+
+### Recommended: Two-phase login
+
+Works in all environments (desktop, headless, remote container).
+
+**Step 1 — Initialize login (non-blocking):**
+```bash
+qwencloud auth login --init-only --format json
+```
+Exits immediately. Parse the stdout JSON `events` array:
+- `already_authenticated` → user is logged in, skip to commands
+- `device_code` → extract `verification_url` and present it to the user
+
+On desktop environments with a browser, open the URL for the user:
+```bash
+open "$VERIFICATION_URL"          # macOS
+xdg-open "$VERIFICATION_URL"      # Linux
+start "" "$VERIFICATION_URL"      # Windows
+```
+
+**Step 2 — IMMEDIATELY start polling (do NOT wait for user confirmation):**
+```bash
+qwencloud auth login --complete --format json
+```
+Parse the stdout JSON `events` array:
+- `success` → login complete, proceed to commands
+- `expired` → device code expired, go back to Step 1
+- `error` → report failure
+
+### TTY environments (interactive terminal)
+
+If the agent is running in a TTY (e.g., user's terminal), simply run:
+```bash
+qwencloud auth login
+```
+The CLI will automatically open the browser and poll until authorization completes.
+
+### JSON event structure
+
+Both `--init-only` and `--complete` output a single JSON document:
+```json
+{
+  "events": [
+    {"event": "device_code", "verification_url": "...", "expires_in": 300},
+    {"event": "success", "authenticated": true, "user": {"aliyunId": "..."}}
+  ]
+}
+```
+
+Event types: `already_authenticated`, `device_code`, `success`, `expired`, `error`, `pending`.
+
+### NEVER:
+
+- ❌ Ask the user "Have you completed authorization?" before running `--complete`
+- ❌ Wait for user confirmation before polling — run `--complete` immediately after presenting the URL
+- ❌ Re-run `--init-only` without completing (this creates a new device code and invalidates the previous one)
 
 ## Usage
 
+All commands support `--format json` for structured, machine-parseable output (**recommended default**), and `--format text` for clean plaintext output.
+
+For agent use, **always prefer `--format json`** and parse the JSON response. Only fall back to `--format text` when the user explicitly requests human-readable plaintext.
+
+Never parse `table` format programmatically — it contains ANSI codes and Unicode borders.
+
+### Auth Commands
+
+**`qwencloud auth status`** — Check current authentication state
+
 ```bash
-python3 <path-to-skill>/scripts/usage.py <command> [options]
+qwencloud auth status --format json
 ```
 
-### Commands
-
-**`login`** — Authenticate via Device Flow (opens browser)
+**`qwencloud auth logout`** — Revoke session server-side and clear local credentials
 
 ```bash
-python3 scripts/usage.py login
+qwencloud auth logout
 ```
 
-**`login --headless`** — Headless login for environments without a browser (e.g. remote servers, containers, agent runtimes)
+### Usage Commands
+
+**`qwencloud usage summary`** — View usage summary (free tier, coding plan, pay-as-you-go)
 
 ```bash
-# Step 1: Start login and get the verification URL
-python3 scripts/usage.py login --headless
-# Output (stdout): {"status": "pending", "verification_url": "https://...", "expires_in": 900}
-
-# Step 2: User opens the URL in a browser on another device and completes authorization
-
-# Step 3: Poll for authorization completion
-python3 scripts/usage.py login --headless --poll
-# Output (stdout): {"status": "complete", "user": "user@example.com"}
-```
-
-Note: If you skip the explicit `--poll` step and directly run `summary` or `breakdown`, the script will automatically detect the pending session and poll for authorization.
-
-**`logout`** — Revoke session server-side and clear local credentials
-
-```bash
-python3 scripts/usage.py logout
-python3 scripts/usage.py logout --token <auth_token>   # pass explicit auth_token query param
-```
-
-**`summary`** — View usage summary (free tier, coding plan, pay-as-you-go)
-
-```bash
-python3 scripts/usage.py summary                      # Current month
-python3 scripts/usage.py summary --period last-month  # Last month
-python3 scripts/usage.py summary --from 2026-03-01 --to 2026-03-31
-python3 scripts/usage.py summary --format json        # JSON output
+qwencloud usage summary                      # Current month
+qwencloud usage summary --period last-month  # Last month
+qwencloud usage summary --from 2026-03-01 --to 2026-03-31
+qwencloud usage summary --format json        # JSON output
 ```
 
 **Period presets**: `today`, `yesterday`, `week`, `month` (default), `last-month`, `quarter`, `year`, `YYYY-MM`
 
-**`breakdown`** — View model usage breakdown
+**`qwencloud usage breakdown`** — View model usage breakdown
 
 ```bash
-python3 scripts/usage.py breakdown --model qwen3.6-plus --days 7
-python3 scripts/usage.py breakdown --model qwen3.5-plus qwen3.6-plus --period 2026-03
-python3 scripts/usage.py breakdown --model qwen-plus --period 2026-03 --granularity month
-python3 scripts/usage.py breakdown --period 2026-03   # all models
+qwencloud usage breakdown --model qwen3.6-plus --days 7
+qwencloud usage breakdown --model qwen3.5-plus --period 2026-03
+qwencloud usage breakdown --model qwen-plus --period 2026-03 --granularity month
+qwencloud usage breakdown --model qwen3.6-plus --format json
+```
+
+**`qwencloud usage free-tier`** — View free tier quota details
+
+```bash
+qwencloud usage free-tier
+qwencloud usage free-tier --format json
+```
+
+**`qwencloud usage payg`** — View pay-as-you-go billing details
+
+```bash
+qwencloud usage payg
+qwencloud usage payg --format json
 ```
 
 ### Breakdown Parameters: How to Think About Them
 
 **Three independent dimensions — combine them freely:**
 
-`--model` (optional) + **date range** + **granularity**
+`--model` (required) + **date range** + **granularity**
 
 **Model scope:**
-- `--model <id>` — single model (e.g. `qwen3.5-plus`)
-- `--model <id1> <id2> ...` — multiple models space-separated (e.g. `--model qwen3.5-plus qwen3.6-plus`)
-- omit `--model` — queries all models; useful for "how much did I spend in total" questions
+- `--model <id>` — single model (e.g. `qwen3.5-plus`); **required** for breakdown
 
 **Date range** — three patterns, pick by how the user described the period:
 
@@ -108,68 +188,124 @@ python3 scripts/usage.py breakdown --period 2026-03   # all models
 - `month` — one row per calendar month; good for multi-month trends
 - `quarter` — one row per quarter; good for Q-over-Q comparison
 
-The script automatically splits any range into per-month API calls — the granularity only affects how rows are grouped in the output, not what the API receives.
-
 **Classic examples:**
 ```bash
 # Single model, single month, daily detail
-breakdown --model qwen3.5-plus --period 2026-03
-
-# Multiple models, single month, daily detail
-breakdown --model qwen3.5-plus qwen3.6-plus --period 2026-03
+qwencloud usage breakdown --model qwen3.5-plus --period 2026-03
 
 # Single model, last 3 months, monthly summary
-breakdown --model qwen3.5-plus --days 90 --granularity month
+qwencloud usage breakdown --model qwen3.5-plus --days 90 --granularity month
 
 # Single model, specific quarter, quarterly rollup
-breakdown --model qwen3.5-plus --from 2026-01-01 --to 2026-03-31 --granularity quarter
+qwencloud usage breakdown --model qwen3.5-plus --from 2026-01-01 --to 2026-03-31 --granularity quarter
 
-# All models, this month, daily breakdown
-breakdown --period month
+# Single model, this month, daily breakdown
+qwencloud usage breakdown --model qwen3.6-plus --period month
 ```
 
-## Output Example
+## Output and Agent Display Rules
+
+CLI commands return JSON by default in agent/pipe environments (`auto` format: TTY → table, pipe → json).
+**JSON is the primary output mode for agents** — always pass `--format json` explicitly, parse the structured response, then present a human-readable summary to the user.
+
+### JSON output example (`--format json`)
+
+```bash
+qwencloud usage summary --period month --format json
+```
+
+Returns structured JSON with three sections:
+```json
+{
+  "period": { "from": "2026-04-01", "to": "2026-04-24" },
+  "free_tier": [
+    { "model_id": "qwen3.6-plus", "quota": { "remaining": 850000, "total": 1000000, "unit": "tokens", "used_pct": 15 } }
+  ],
+  "coding_plan": {
+    "subscribed": true,
+    "plan": "PRO",
+    "windows": {
+      "per_5h": { "remaining": 4800, "total": 6000, "used_pct": 20 },
+      "weekly": { "remaining": 38200, "total": 45000, "used_pct": 15 },
+      "monthly": { "remaining": 82500, "total": 90000, "used_pct": 8 }
+    }
+  },
+  "pay_as_you_go": {
+    "models": [
+      { "model_id": "qwen3.6-plus", "usage": { "tokens_total": 480000 }, "cost": 0.38, "currency": "USD" },
+      { "model_id": "qwen-plus", "usage": { "tokens_total": 460000 }, "cost": 0.13, "currency": "USD" }
+    ],
+    "total": { "cost": 0.51, "currency": "USD" }
+  }
+}
+```
+
+### Text output example (`--format text`)
+
+```bash
+qwencloud usage summary --period month --format text
+```
 
 ```plaintext
 Usage Summary  ·  2026-04-10
 
 -- Free Tier Quota -------------------------------------------------------
 Model                Remaining      Total          Progress
-qwen3.6-plus         850K tokens    1M tokens      [████████████░░░] 85% left
-wan2.6-t2i           38 images      50 images      [█████████░░░░░░] 76% left
+qwen3.6-plus         850K tokens    1M tokens      85% left
+wan2.6-t2i           38 images      50 images      76% left
 --------------------------------------------------------------------------
 
 -- Coding Plan · PRO Plan ------------------------------------------------
 Window           Remaining      Total          Progress
-Per 5 hours      4.8K req       6K req         [████░░░░░░░░░] 20% used
-This week        38.2K req      45K req        [███░░░░░░░░░░] 15% used
-This month       82.5K req      90K req        [██░░░░░░░░░░░]  8% used
+Per 5 hours      4.8K req       6K req         20% used
+This week        38.2K req      45K req        15% used
+This month       82.5K req      90K req         8% used
 --------------------------------------------------------------------------
 
 -- Pay-as-you-go · 2026-04-01 → 2026-04-10 -------------------------------
-Model                Requests     Usage              Cost
-qwen3.6-plus         240          480K tok           $0.38
-qwen-plus            920          460K tok           $0.13
+Model                Usage              Cost
+qwen3.6-plus         480K tok           $0.38
+qwen-plus            460K tok           $0.13
 --------------------------------------------------------------------------
-Total                1.2K         —                  $0.51
+Total                —                  $0.51
 ```
 
-## ⚠️ CRITICAL: Agent Output Rules
+### ⚠️ CRITICAL: How to present output to the user
 
-**When executing this skill, you MUST:**
+**When using `--format json` (recommended for agents):**
 
-1. **Display script output EXACTLY AS-IS** — no modification, no reformatting
+1. **Parse the JSON** and extract the relevant data for the user's question
+2. **Present a human-readable summary** — do not dump raw JSON to the user
+3. **Add analysis AFTER the summary** — clearly separated with `---`
+
+**When using `--format text`:**
+
+1. **Display CLI output EXACTLY AS-IS** — no modification, no reformatting
 2. **Preserve all formatting** — alignment, spacing, progress bars, separators
 3. **Add analysis AFTER output only** — clearly separated with `---`
 
 **NEVER:**
-- ❌ Reformat or summarize the table
+- ❌ Dump raw JSON to the user without interpretation
+- ❌ Reformat or summarize text/table output
 - ❌ Add prefixes like "Here's your usage:"
-- ❌ Convert to bullet points or different format
+- ❌ Convert text/table output to bullet points
 
-**✅ CORRECT:**
+**✅ CORRECT (JSON mode):**
 ```
-[Script output - exactly as-is]
+Your QwenCloud usage for April:
+
+**Free Tier**: qwen3.6-plus has 85% remaining (850K / 1M tokens), wan2.6-t2i has 76% remaining (38 / 50 images).
+**Coding Plan (PRO)**: 8% used this month (82.5K / 90K requests).
+**Pay-as-you-go**: $0.51 total — qwen3.6-plus $0.38, qwen-plus $0.13.
+
+---
+
+**💡 Analysis**: Your qwen3.6-plus free tier is 85% remaining...
+```
+
+**✅ CORRECT (Text mode):**
+```
+[CLI text output - exactly as-is]
 
 ---
 
@@ -182,110 +318,30 @@ Here's your usage:
 - qwen3.6-plus: 850K tokens remaining (85% left)
 ```
 
-## ⚠️ Headless Login: Agent Behavior
-
-When the script exits with code 2 and stderr contains `[device-flow] Headless login:`,
-`[device-flow] Pending login found`, or the AuthError message starts with
-`[HEADLESS_LOGIN_ACTION]`, this means the environment has no browser and the user must
-authorize on another device.
-
-### Parsing the AuthError
-
-The AuthError message is structured for easy parsing:
-
-```
-[HEADLESS_LOGIN_ACTION] url=<raw_url> | markdown=[Authorize in QwenCloud](<url>) | action=Present URL to user then IMMEDIATELY re-run with --poll
-```
-
-- **`url`** — Raw URL, always present. Use this if your output does not support Markdown.
-- **`markdown`** — Pre-formatted Markdown link. Use this if your output supports Markdown
-  so the user sees a clickable "Authorize in QwenCloud" link.
-- **`action`** — What you MUST do next.
-
-### Agent MUST follow this exact sequence:
-
-1. **Present the URL to the user** — Use the `markdown` field if your output supports
-   Markdown (renders as a clickable link). Otherwise use the raw `url` field. Tell the
-   user to open it in any browser and complete authorization.
-2. **IMMEDIATELY re-run the same command with `--poll`** — Append `--poll` to the original
-   command arguments. Do NOT wait for the user to confirm they have authorized. The script
-   will poll until the user completes authorization (up to ~15 minutes). The poll is
-   blocking — it will wait and return results once authorization succeeds.
-3. **If poll times out** — The script exits with code 2 again. Show the user a new URL
-   and repeat from step 1.
-
-### Example agent flow
-
-```
-Run: python3 usage.py summary --period month
-→ Exit code 2, stderr contains: "[HEADLESS_LOGIN_ACTION] url=https://... | markdown=[Authorize in QwenCloud](https://...) | action=..."
-→ Agent says: "Please sign in: [Authorize in QwenCloud](https://...) I'll start polling now."
-→ Agent IMMEDIATELY runs: python3 usage.py summary --period month --poll
-→ Script polls... user authorizes... script outputs summary results
-→ Agent displays results
-```
-
-### NEVER:
-
-- ❌ Ask the user "Have you completed authorization?" before re-running
-- ❌ Wait for user confirmation before polling
-- ❌ Re-run without `--poll` (this would just output the URL again and exit)
-- ❌ Ignore the `action` field in the AuthError message
-
 ## Exit Codes
 
 | Code | Meaning              |
 |------|----------------------|
 | 0    | Success              |
+| 1    | General/usage error  |
 | 2    | Authentication error |
-| 3    | Network/API error    |
+| 3    | Network error        |
+| 4    | Configuration error  |
+| 130  | Interrupted          |
 
-## Update Check (MANDATORY Post-Execution)
+## CLI Update Check
 
-After script execution, check stderr for action signals. The script automatically detects update status and emits
-structured signals. You MUST act on them. This section also applies when the user explicitly asks to check for updates.
+When the user explicitly asks to check for cli updates (e.g. "check for cli updates", "check cli version", "is there a new version cli"):
 
-### Signal: `[ACTION_REQUIRED] qwencloud-update-check skill is not installed`
+1. Run: `qwencloud version --check`
+2. Report the result.
 
-When stderr contains this signal, you MUST present the following options to the user and **wait for their response
-before proceeding**. Do NOT silently skip this.
-
-> The update-check skill is not installed. It keeps you informed about new qwencloud/qwencloud-ai features and bug fixes.
->
-> 1) **Install now** — I'll run the install command for you
-> 2) **Skip for now** — do nothing this time
-> 3) **Never remind me** — permanently suppress this prompt
-
-After the user responds:
-
-- User chooses **1** → run:
-  `npx skills add QwenCloud/qwencloud-ai --skill qwencloud-update-check -y`, then run:
-  `python3 <this-skill-scripts-dir>/gossamer.py --dismiss`
-- User chooses **2** → run: `python3 <this-skill-scripts-dir>/gossamer.py --dismiss`, then continue normally
-- User chooses **3** → run: `python3 <this-skill-scripts-dir>/gossamer.py --never-install`, then continue normally
-
-### Signal: `[UPDATE_AVAILABLE]`
-
-When stderr contains this signal, you MUST append a brief update notice to your response, including the version info and
-the update command shown in the stderr output.
-
-### No signal in stderr
-
-If stderr contains neither `[ACTION_REQUIRED]` nor `[UPDATE_AVAILABLE]`, no action is needed — the skill is installed
-and up to date (or cached within 24h).
-
-### Explicit user request
-
-When the user explicitly asks to check for updates (e.g. "check for updates", "check version"):
-
-1. Look for `qwencloud-update-check/SKILL.md` in sibling skill directories.
-2. If found — run: `python3 <qwencloud-update-check-dir>/scripts/check_update.py --print-response` and report the result.
-3. If not found — present the install options above.
+The QwenCloud CLI handles update notifications natively; no additional stderr signal handling is required in this skill.
 
 ## Implementation Notes
 
 - **Pay-as-you-go**: API returns total usage only (no input/output split)
 - **Coding Plan**: Aggregate request counts at plan level (no per-model breakdown)
-- **logout**: Calls `POST t.qwencloud.com/cli/device/logout?token=<auth_token>` (token optional) with `Authorization: Bearer <access_token>`, then clears local credentials. Server-side call is best-effort — local logout always succeeds.
-- **Authentication**: Uses Bearer token against `cli.qwencloud.com/data/v2/api.json` (JSON body). Headless mode is auto-detected (SSH, container, no DISPLAY, no browser).
-- **Dependencies**: Python 3.9+. Run `pip install -r <path-to-skill>/scripts/requirements.txt` before first use.
+- **logout**: Revokes server-side session and clears local credentials (keychain + file). Server-side call is best-effort — local logout always succeeds.
+- **Authentication**: Uses OAuth 2.0 Device Authorization Grant with PKCE. Credentials stored in OS keychain when available, with encrypted file fallback.
+- **breakdown --model is required**: Unlike the previous Python implementation, the CLI requires `--model` for breakdown. To query all models' usage, use `qwencloud usage summary` instead.
